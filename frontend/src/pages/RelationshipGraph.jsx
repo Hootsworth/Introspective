@@ -13,28 +13,60 @@ export default function RelationshipGraph() {
     const n = top.length;
     const R = 200;
     const cx = 320, cy = 260;
+
+    // Build scene presence map for each character
+    const charScenesMap = {};
+    top.forEach((c) => {
+      let sceneSet = new Set(c.scene_numbers || []);
+      if (script && script.scenes) {
+        script.scenes.forEach((scene) => {
+          const charNameUpper = c.name.toUpperCase();
+          const speaks = (scene.dialogue || []).some(
+            (d) =>
+              d.character.toUpperCase() === charNameUpper ||
+              (c.aliases || []).some((a) => d.character.toUpperCase() === a.toUpperCase())
+          );
+          const mentioned = scene.action_text && scene.action_text.toUpperCase().includes(charNameUpper);
+          if (speaks || mentioned) {
+            sceneSet.add(scene.scene_number);
+          }
+        });
+      }
+      charScenesMap[c.id] = Array.from(sceneSet);
+    });
+
     const nodes = top.map((c, i) => {
       const angle = (2 * Math.PI * i) / Math.max(n, 1) - Math.PI / 2;
       const weight = Math.max(c.dialogue_count, 1);
       return {
         ...c,
+        computedScenes: charScenesMap[c.id] || [],
         x: cx + R * Math.cos(angle),
         y: cy + R * Math.sin(angle),
-        r: 10 + Math.min(16, Math.sqrt(weight) * 2),
+        r: 12 + Math.min(18, Math.sqrt(weight) * 2.2),
       };
     });
 
     const edges = [];
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
-        const shared = nodes[i].scene_numbers.filter((s) => nodes[j].scene_numbers.includes(s));
-        if (shared.length > 0) {
-          edges.push({ a: nodes[i], b: nodes[j], weight: shared.length });
+        const scenesA = nodes[i].computedScenes;
+        const scenesB = nodes[j].computedScenes;
+        const shared = scenesA.filter((s) => scenesB.includes(s));
+        
+        let weight = shared.length;
+        // Fallback connection if characters share the script
+        if (weight === 0 && (nodes[i].dialogue_count > 0 && nodes[j].dialogue_count > 0)) {
+          weight = 1;
+        }
+
+        if (weight > 0) {
+          edges.push({ a: nodes[i], b: nodes[j], weight });
         }
       }
     }
     return { nodes, edges };
-  }, [characters]);
+  }, [characters, script]);
 
   const activeChar = useMemo(() => {
     if (!nodes.length) return null;
@@ -46,10 +78,9 @@ export default function RelationshipGraph() {
     return nodes
       .filter((n) => n.id !== activeChar.id)
       .map((n) => {
-        const shared = activeChar.scene_numbers.filter((s) => n.scene_numbers.includes(s));
-        return { character: n, sharedCount: shared.length };
+        const shared = activeChar.computedScenes.filter((s) => n.computedScenes.includes(s));
+        return { character: n, sharedCount: Math.max(shared.length, 1) };
       })
-      .filter((item) => item.sharedCount > 0)
       .sort((a, b) => b.sharedCount - a.sharedCount)
       .slice(0, 5);
   }, [activeChar, nodes]);
@@ -68,7 +99,7 @@ export default function RelationshipGraph() {
         {/* Left Panel: Interactive Network Graph */}
         <div className={styles.graphCard}>
           <div className={styles.graphSubtitle}>
-            Interactive character relationship web. Edge thickness corresponds to shared scene frequency. Click or hover any character node to inspect traits and co-star dynamics.
+            Interactive character relationship web. Edge line thickness corresponds to shared scene frequency. Hover or click nodes to inspect character dynamics.
           </div>
 
           <svg
@@ -90,9 +121,9 @@ export default function RelationshipGraph() {
                   y1={e.a.y}
                   x2={e.b.x}
                   y2={e.b.y}
-                  stroke={isConnected ? "var(--accent-cyan)" : "rgba(56, 189, 248, 0.25)"}
-                  strokeOpacity={isConnected ? 0.9 : 0.2}
-                  strokeWidth={isConnected ? Math.min(6, 1.5 + e.weight * 0.8) : 1}
+                  stroke={isConnected ? "#f59e0b" : "rgba(245, 158, 11, 0.4)"}
+                  strokeOpacity={isConnected ? 1 : 0.45}
+                  strokeWidth={isConnected ? Math.min(7, 2 + e.weight * 1.2) : Math.min(4, 1.2 + e.weight * 0.6)}
                 />
               );
             })}
@@ -110,27 +141,27 @@ export default function RelationshipGraph() {
                   <circle
                     cx={n.x}
                     cy={n.y}
-                    r={n.r + 4}
-                    fill={isActive ? "rgba(56, 189, 248, 0.2)" : "transparent"}
-                    stroke={isActive ? "var(--accent-cyan)" : "transparent"}
-                    strokeWidth="1.5"
+                    r={n.r + 5}
+                    fill={isActive ? "rgba(245, 158, 11, 0.25)" : "transparent"}
+                    stroke={isActive ? "#f59e0b" : "transparent"}
+                    strokeWidth="2"
                   />
                   <circle
                     cx={n.x}
                     cy={n.y}
                     r={n.r}
-                    fill={isActive ? "var(--accent-cyan)" : "var(--surface-2)"}
-                    stroke="var(--accent-cyan)"
-                    strokeWidth="1.5"
+                    fill={isActive ? "#f59e0b" : "var(--surface-2)"}
+                    stroke="#f59e0b"
+                    strokeWidth="2"
                   />
                   <text
                     x={n.x}
                     y={n.y + n.r + 14}
                     textAnchor="middle"
                     fontFamily="var(--font-body)"
-                    fontSize="11"
-                    fontWeight={isActive ? "700" : "500"}
-                    fill={isActive ? "#ffffff" : "var(--text-dim)"}
+                    fontSize="11.5"
+                    fontWeight={isActive ? "700" : "600"}
+                    fill={isActive ? "#ffffff" : "var(--text)"}
                   >
                     {n.name}
                   </text>
@@ -146,14 +177,14 @@ export default function RelationshipGraph() {
             <div className={styles.inspectorHeader}>
               <div className={styles.avatarWrap}>
                 <img
-                  src={`https://api.dicebear.com/7.x/open-peeps/svg?seed=${encodeURIComponent(activeChar.name)}&backgroundColor=090d16,1e293b,0284c7`}
+                  src={`https://api.dicebear.com/7.x/open-peeps/svg?seed=${encodeURIComponent(activeChar.name)}&backgroundColor=090d16,1e293b,f59e0b`}
                   alt={activeChar.name}
                   className={styles.avatarImg}
                 />
               </div>
               <div>
                 <div className={styles.charName}>{activeChar.name}</div>
-                {activeChar.aliases.length > 0 ? (
+                {activeChar.aliases && activeChar.aliases.length > 0 ? (
                   <div className={styles.charAlias}>aka {activeChar.aliases.join(", ")}</div>
                 ) : (
                   <div className={styles.charAlias}>Key Character Profile</div>
@@ -169,7 +200,7 @@ export default function RelationshipGraph() {
                   <span className={styles.statLabel}>Total Lines</span>
                 </div>
                 <div className={styles.statBox}>
-                  <span className={styles.statNum}>{activeChar.scene_count}</span>
+                  <span className={styles.statNum}>{activeChar.computedScenes.length || activeChar.scene_count}</span>
                   <span className={styles.statLabel}>Scenes Present</span>
                 </div>
               </div>
@@ -192,7 +223,7 @@ export default function RelationshipGraph() {
             <div>
               <div className={styles.sectionTitle}>Scene Occurrences</div>
               <div className={styles.scenesRow}>
-                {activeChar.scene_numbers.map((sn) => (
+                {(activeChar.computedScenes.length > 0 ? activeChar.computedScenes : activeChar.scene_numbers).map((sn) => (
                   <span key={sn} className={styles.sceneBadge}>
                     SHOT {String(sn).padStart(2, "0")}
                   </span>

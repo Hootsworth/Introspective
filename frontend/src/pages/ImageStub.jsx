@@ -102,32 +102,25 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
     );
   }
 
-  // Dynamic Slate Stage with clean vector grid
+  // Dynamic Slate Stage on solid black
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative", background: "var(--surface-1)" }}>
+    <div style={{ width: "100%", height: "100%", position: "relative", background: "#000000" }}>
       <svg
         viewBox="0 0 800 450"
         style={{ width: "100%", height: "100%", display: "block" }}
         preserveAspectRatio="xMidYMid slice"
       >
-        <defs>
-          <linearGradient id={`bg-${scene.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={color1} stopOpacity="0.8" />
-            <stop offset="100%" stopColor="#050811" />
-          </linearGradient>
-        </defs>
-
-        <rect width="800" height="450" fill={`url(#bg-${scene.id})`} />
+        <rect width="800" height="450" fill="#000000" />
 
         {/* Crisp Camera Framing Guide */}
-        <rect x="20" y="20" width="760" height="410" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-        <line x1="266" y1="20" x2="266" y2="430" stroke="rgba(255,255,255,0.04)" strokeDasharray="4 4" />
-        <line x1="533" y1="20" x2="533" y2="430" stroke="rgba(255,255,255,0.04)" strokeDasharray="4 4" />
-        <line x1="20" y1="150" x2="780" y2="150" stroke="rgba(255,255,255,0.04)" strokeDasharray="4 4" />
-        <line x1="20" y1="300" x2="780" y2="300" stroke="rgba(255,255,255,0.04)" strokeDasharray="4 4" />
+        <rect x="20" y="20" width="760" height="410" fill="none" stroke="rgba(245, 158, 11, 0.25)" strokeWidth="1" />
+        <line x1="266" y1="20" x2="266" y2="430" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
+        <line x1="533" y1="20" x2="533" y2="430" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
+        <line x1="20" y1="150" x2="780" y2="150" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
+        <line x1="20" y1="300" x2="780" y2="300" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
 
         {/* Center Crosshair */}
-        <path d="M 390 225 L 410 225 M 400 215 L 400 235" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+        <path d="M 390 225 L 410 225 M 400 215 L 400 235" stroke="#f59e0b" strokeWidth="1.5" />
 
         <text
           x="40"
@@ -142,7 +135,7 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
         <text
           x="40"
           y="88"
-          fill={color3}
+          fill="#f59e0b"
           fontSize="12"
           fontFamily="Inter, sans-serif"
           fontWeight="600"
@@ -168,7 +161,7 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
           position: "absolute",
           top: 10,
           right: 10,
-          background: "rgba(9, 13, 22, 0.8)",
+          background: "rgba(0, 0, 0, 0.85)",
           backdropFilter: "blur(4px)",
           padding: "3px 8px",
           borderRadius: 4,
