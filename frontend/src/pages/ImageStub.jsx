@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { api } from "../api/client";
 import PitchDeckViewer from "../components/PitchDeckViewer";
@@ -7,21 +7,21 @@ import { Button, Pill } from "../components/ui";
 import styles from "./Storyboard.module.css";
 
 function parseColor(colorStr) {
-  if (!colorStr) return "#38bdf8";
+  if (!colorStr) return "#f59e0b";
   colorStr = colorStr.trim();
   if (colorStr.startsWith("#")) return colorStr;
   if (/^[0-9a-fA-F]{3,6}$/.test(colorStr)) return `#${colorStr}`;
   const knownColors = {
     red: "#ef4444",
-    blue: "#3b82f6",
+    blue: "#f59e0b",
     green: "#10b981",
     yellow: "#eab308",
     amber: "#f59e0b",
-    cyan: "#06b6d4",
-    teal: "#14b8a6",
+    gold: "#f59e0b",
+    cyan: "#f59e0b",
+    teal: "#f59e0b",
     purple: "#a855f7",
     orange: "#f97316",
-    gold: "#d97706",
     black: "#1e293b",
     dark: "#0f172a",
     shadow: "#334155",
@@ -30,22 +30,17 @@ function parseColor(colorStr) {
     grey: "#64748b",
     white: "#f8fafc",
     warm: "#f59e0b",
-    cold: "#3b82f6",
+    cold: "#f59e0b",
     neon: "#10b981",
   };
   const lower = colorStr.toLowerCase();
   for (const [key, hex] of Object.entries(knownColors)) {
     if (lower.includes(key)) return hex;
   }
-  return "#0284c7";
+  return "#f59e0b";
 }
 
 function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset, aspectRatio }) {
-  const palette = (scene.cinematic?.palette || []).map(parseColor);
-  const color1 = palette[0] || "#0f172a";
-  const color2 = palette[1] || "#1e293b";
-  const color3 = palette[2] || "#38bdf8";
-
   const imageUrl = generatedFrameUrl || scene.generated_image_url;
 
   if (imageUrl) {
@@ -187,6 +182,18 @@ export default function ImageStub({ kind }) {
   const [customPrompts, setCustomPrompts] = useState({});
   const [expandedPrompts, setExpandedPrompts] = useState({});
   const [renderError, setRenderError] = useState(null);
+  const [previewIndex, setPreviewIndex] = useState(null);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (previewIndex === null) return;
+      if (e.key === "Escape") setPreviewIndex(null);
+      if (e.key === "ArrowLeft") setPreviewIndex((prev) => Math.max(0, prev - 1));
+      if (e.key === "ArrowRight") setPreviewIndex((prev) => Math.min(script.scenes.length - 1, prev + 1));
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [previewIndex, script]);
 
   if (!script || !script.scenes.length) {
     return (
@@ -281,8 +288,8 @@ export default function ImageStub({ kind }) {
             onClick={() => setSubTab("grid")}
             style={{
               background: subTab === "grid" ? "var(--surface-1)" : "transparent",
-              color: subTab === "grid" ? "var(--accent-cyan)" : "var(--text-dim)",
-              border: "1px solid " + (subTab === "grid" ? "rgba(56, 189, 248, 0.3)" : "transparent"),
+              color: subTab === "grid" ? "var(--accent-gold)" : "var(--text-dim)",
+              border: "1px solid " + (subTab === "grid" ? "rgba(245, 158, 11, 0.3)" : "transparent"),
               padding: "6px 14px",
               borderRadius: 6,
               fontWeight: subTab === "grid" ? 600 : 500,
@@ -297,8 +304,8 @@ export default function ImageStub({ kind }) {
             onClick={() => setSubTab("deck")}
             style={{
               background: subTab === "deck" ? "var(--surface-1)" : "transparent",
-              color: subTab === "deck" ? "var(--accent-cyan)" : "var(--text-dim)",
-              border: "1px solid " + (subTab === "deck" ? "rgba(56, 189, 248, 0.3)" : "transparent"),
+              color: subTab === "deck" ? "var(--accent-gold)" : "var(--text-dim)",
+              border: "1px solid " + (subTab === "deck" ? "rgba(245, 158, 11, 0.3)" : "transparent"),
               padding: "6px 14px",
               borderRadius: 6,
               fontWeight: subTab === "deck" ? 600 : 500,
@@ -313,8 +320,8 @@ export default function ImageStub({ kind }) {
             onClick={() => setSubTab("video")}
             style={{
               background: subTab === "video" ? "var(--surface-1)" : "transparent",
-              color: subTab === "video" ? "var(--accent-cyan)" : "var(--text-dim)",
-              border: "1px solid " + (subTab === "video" ? "rgba(56, 189, 248, 0.3)" : "transparent"),
+              color: subTab === "video" ? "var(--accent-gold)" : "var(--text-dim)",
+              border: "1px solid " + (subTab === "video" ? "rgba(245, 158, 11, 0.3)" : "transparent"),
               padding: "6px 14px",
               borderRadius: 6,
               fontWeight: subTab === "video" ? 600 : 500,
@@ -379,7 +386,7 @@ export default function ImageStub({ kind }) {
 
       {kind === "storyboard" && subTab === "grid" ? (
         <div className={styles.grid}>
-          {script.scenes.map((scene) => {
+          {script.scenes.map((scene, idx) => {
             const prompt = getSynthesizedPrompt(scene);
             const isGenerating = generatingId === scene.id;
             const currentFrameUrl = generatedFrames[scene.id] || scene.generated_image_url;
@@ -398,7 +405,12 @@ export default function ImageStub({ kind }) {
                   )}
                 </div>
 
-                <div className={`${styles.viewport} ${viewportClass}`}>
+                <div
+                  className={`${styles.viewport} ${viewportClass}`}
+                  onClick={() => setPreviewIndex(idx)}
+                  style={{ cursor: "pointer" }}
+                  title="Click to magnify in preview mode"
+                >
                   <SceneFrameArtwork
                     scene={scene}
                     generatedFrameUrl={currentFrameUrl}
@@ -476,7 +488,7 @@ export default function ImageStub({ kind }) {
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
               {script.scenes.map((s) => {
-                const rawPalette = s.cinematic?.palette || ["#0f172a", "#1e293b", "#38bdf8"];
+                const rawPalette = s.cinematic?.palette || ["#0f172a", "#1e293b", "#f59e0b"];
                 return (
                   <div
                     key={s.id}
@@ -533,6 +545,230 @@ export default function ImageStub({ kind }) {
           </div>
         </div>
       )}
+
+      {/* Lightbox Magnify Preview Modal */}
+      {previewIndex !== null && script.scenes[previewIndex] && (() => {
+        const previewScene = script.scenes[previewIndex];
+        const previewUrl = generatedFrames[previewScene.id] || previewScene.generated_image_url;
+        const prompt = getSynthesizedPrompt(previewScene);
+        const hasPrev = previewIndex > 0;
+        const hasNext = previewIndex < script.scenes.length - 1;
+
+        return (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 9999,
+              background: "rgba(5, 7, 13, 0.94)",
+              backdropFilter: "blur(12px)",
+              display: "flex",
+              flexDirection: "column",
+              padding: "20px 32px",
+            }}
+            onClick={() => setPreviewIndex(null)}
+          >
+            {/* Top Bar */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: 16,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 12,
+                    fontWeight: 700,
+                    color: "var(--accent-gold)",
+                    background: "rgba(245, 158, 11, 0.15)",
+                    border: "1px solid rgba(245, 158, 11, 0.3)",
+                    padding: "3px 8px",
+                    borderRadius: 4,
+                  }}
+                >
+                  SHOT {String(previewScene.scene_number).padStart(2, "0")} / {String(script.scenes.length).padStart(2, "0")}
+                </span>
+                <span style={{ fontSize: 16, fontWeight: 700, color: "#ffffff" }}>
+                  {(previewScene.slugline.split("-")[0] || previewScene.slugline).trim()}
+                </span>
+                {previewScene.cinematic?.camera && (
+                  <span
+                    style={{
+                      fontSize: 12,
+                      fontFamily: "var(--font-mono)",
+                      color: "var(--text-dim)",
+                      background: "var(--surface-2)",
+                      border: "1px solid var(--border-soft)",
+                      padding: "2px 8px",
+                      borderRadius: 4,
+                    }}
+                  >
+                    {previewScene.cinematic.camera} · {previewScene.cinematic.lens_suggestion || "50mm"}
+                  </span>
+                )}
+              </div>
+
+              <button
+                onClick={() => setPreviewIndex(null)}
+                style={{
+                  background: "rgba(255, 255, 255, 0.1)",
+                  border: "1px solid var(--border-soft)",
+                  color: "#ffffff",
+                  borderRadius: "50%",
+                  width: 36,
+                  height: 36,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                  fontSize: 16,
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Stage View Area */}
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 20,
+                minHeight: 0,
+                position: "relative",
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setPreviewIndex((prev) => Math.max(0, prev - 1))}
+                disabled={!hasPrev}
+                style={{
+                  background: "rgba(255, 255, 255, 0.1)",
+                  border: "1px solid var(--border-soft)",
+                  color: "#ffffff",
+                  borderRadius: "50%",
+                  width: 48,
+                  height: 48,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: hasPrev ? "pointer" : "default",
+                  opacity: hasPrev ? 1 : 0.2,
+                  fontSize: 22,
+                  flexShrink: 0,
+                }}
+              >
+                ‹
+              </button>
+
+              <div
+                style={{
+                  flex: 1,
+                  height: "100%",
+                  maxHeight: "76vh",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#000000",
+                  borderRadius: 12,
+                  overflow: "hidden",
+                  border: "1px solid rgba(245, 158, 11, 0.3)",
+                  boxShadow: "0 20px 60px rgba(0,0,0,0.8)",
+                  position: "relative",
+                }}
+              >
+                {previewUrl ? (
+                  <img
+                    src={previewUrl.startsWith("http") ? previewUrl : `${api.base}${previewUrl}`}
+                    alt={`Preview frame ${previewScene.scene_number}`}
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                  />
+                ) : (
+                  <SceneFrameArtwork
+                    scene={previewScene}
+                    generatedFrameUrl={null}
+                    isGenerating={false}
+                    stylePreset={stylePreset}
+                    aspectRatio={aspectRatio}
+                  />
+                )}
+              </div>
+
+              <button
+                onClick={() => setPreviewIndex((prev) => Math.min(script.scenes.length - 1, prev + 1))}
+                disabled={!hasNext}
+                style={{
+                  background: "rgba(255, 255, 255, 0.1)",
+                  border: "1px solid var(--border-soft)",
+                  color: "#ffffff",
+                  borderRadius: "50%",
+                  width: 48,
+                  height: 48,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: hasNext ? "pointer" : "default",
+                  opacity: hasNext ? 1 : 0.2,
+                  fontSize: 22,
+                  flexShrink: 0,
+                }}
+              >
+                ›
+              </button>
+            </div>
+
+            {/* Bottom Prompt Metadata Panel */}
+            <div
+              style={{
+                marginTop: 16,
+                background: "var(--surface-2)",
+                border: "1px solid var(--border-soft)",
+                borderRadius: 8,
+                padding: "12px 18px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 16,
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    color: "var(--accent-gold)",
+                    letterSpacing: "0.05em",
+                    marginBottom: 4,
+                  }}
+                >
+                  Prompt Synthesis
+                </div>
+                <div style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text-dim)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {prompt}
+                </div>
+              </div>
+
+              <Button
+                primary
+                onClick={() => handleGenerateFrame(previewScene)}
+                disabled={generatingId === previewScene.id}
+                style={{ fontSize: 12, flexShrink: 0 }}
+              >
+                {generatingId === previewScene.id ? "Rendering..." : previewUrl ? "Re-render Frame" : "Render Frame"}
+              </Button>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
