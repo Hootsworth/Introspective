@@ -283,12 +283,16 @@ export default function ImageStub({ kind }) {
         style_preset: stylePreset,
       });
 
+      const freshUrl = `${res.image_url}?t=${Date.now()}`;
+
       setGeneratedFrames((prev) => ({
         ...prev,
-        [scene.id]: res.image_url,
+        [scene.id]: freshUrl,
       }));
 
-      if (refreshScript) refreshScript(script.id);
+      if (refreshScript && script) {
+        refreshScript(script.id);
+      }
     } catch (err) {
       setRenderError(`Scene ${scene.scene_number} render failed: ${err.message}`);
     } finally {
