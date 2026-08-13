@@ -1,0 +1,20 @@
+# Backend
+backend/data/*.db
+backend/data/keystore.enc
+backend/data/keystore.salt
+backend/data/cache/
+backend/data/uploads/
+backend/data/exports/
+backend/data/generated/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# OS
+.DS_Store

@@ -1,0 +1,133 @@
+.wrap {
+  padding: 0 32px 40px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.uploadContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 55vh;
+  width: 100%;
+}
+
+.uploadCard {
+  padding: 48px 40px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.uploadTitle {
+  font-family: var(--font-display);
+  font-size: 26px;
+  letter-spacing: 0.02em;
+}
+
+.uploadBody {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin: 12px 0 24px;
+  line-height: 1.6;
+  max-width: 480px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.select {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13.5px;
+}
+
+.progressBar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-soft);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent-amber);
+  transition: width 0.2s ease;
+}
+
+.page {
+  max-width: 800px;
+  margin: 24px auto;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 44px 48px;
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-mono);
+  font-size: 12.8px;
+  line-height: 1.85;
+}
+
+.slugline {
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 22px 0 8px;
+  color: var(--text);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.sceneNum {
+  font-size: 10.5px;
+  color: var(--accent-amber);
+  background: var(--accent-amber-soft);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.action {
+  color: var(--text-dim);
+  white-space: pre-wrap;
+  margin: 0 0 10px;
+}
+
+.dialogueBlock {
+  max-width: 380px;
+  margin: 0 auto 10px;
+  text-align: left;
+}
+
+.character {
+  text-align: center;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.parenthetical {
+  text-align: center;
+  font-style: italic;
+  color: var(--text-faint);
+  font-size: 11.5px;
+}
+
+.line {
+  text-align: center;
+}

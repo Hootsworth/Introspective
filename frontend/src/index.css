@@ -1,0 +1,123 @@
+/* ==========================================================================
+   Script2Vision design tokens
+   ----------------------------------------------------------------------
+   Direction: macOS-native pre-production tool. Light/dark surfaces lifted
+   straight from Apple's own system grays (so it disappears into the OS
+   rather than looking like "an app"), with a teal/amber accent pair
+   borrowed from film color grading (the classic teal-orange complementary
+   scheme) - amber marks warmth/tension/primary action, teal marks
+   calm/secondary data. Slate-style condensed type is reserved for scene
+   numbers and page titles only, everything else is a quiet, legible sans.
+   ========================================================================== */
+
+:root {
+  --bg: #f5f5f7;
+  --surface: #ffffff;
+  --surface-2: #fbfbfd;
+  --border: #d2d2d7;
+  --border-soft: #e5e5ea;
+  --text: #1d1d1f;
+  --text-dim: #6e6e73;
+  --text-faint: #98989d;
+
+  --accent-amber: #c9822f;
+  --accent-amber-soft: #f0dcbc;
+  --accent-teal: #3e7e8c;
+  --accent-teal-soft: #cfe4e8;
+  --accent-red: #c1453d;
+
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.14);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  --font-display: "Bebas Neue", "Arial Narrow", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", monospace;
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #1c1c1e;
+  --surface: #26262a;
+  --surface-2: #2c2c2e;
+  --border: #3a3a3c;
+  --border-soft: #333336;
+  --text: #f5f5f7;
+  --text-dim: #a8a8ad;
+  --text-faint: #6e6e73;
+
+  --accent-amber: #e0a558;
+  --accent-amber-soft: #4a3a20;
+  --accent-teal: #6fb3c2;
+  --accent-teal-soft: #1f3a3f;
+  --accent-red: #e17872;
+
+  --glass-bg: rgba(38, 38, 42, 0.66);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-amber);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
