@@ -35,32 +35,33 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
             position: "absolute",
             inset: 0,
             pointerEvents: "none",
-            border: "1px solid rgba(255, 255, 255, 0.15)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
             background:
-              "linear-gradient(to right, transparent 33%, rgba(255,255,255,0.08) 33%, rgba(255,255,255,0.08) 34%, transparent 34%, transparent 66%, rgba(255,255,255,0.08) 66%, rgba(255,255,255,0.08) 67%, transparent 67%), linear-gradient(to bottom, transparent 33%, rgba(255,255,255,0.08) 33%, rgba(255,255,255,0.08) 34%, transparent 34%, transparent 66%, rgba(255,255,255,0.08) 66%, rgba(255,255,255,0.08) 67%, transparent 67%)",
+              "linear-gradient(to right, transparent 33%, rgba(255,255,255,0.05) 33%, rgba(255,255,255,0.05) 34%, transparent 34%, transparent 66%, rgba(255,255,255,0.05) 66%, rgba(255,255,255,0.05) 67%, transparent 67%), linear-gradient(to bottom, transparent 33%, rgba(255,255,255,0.05) 33%, rgba(255,255,255,0.05) 34%, transparent 34%, transparent 66%, rgba(255,255,255,0.05) 66%, rgba(255,255,255,0.05) 67%, transparent 67%)",
           }}
         />
         {/* Telemetry HUD */}
         <div
           style={{
             position: "absolute",
-            bottom: 12,
-            left: 12,
-            right: 12,
+            bottom: 10,
+            left: 10,
+            right: 10,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
             fontSize: 10,
             fontFamily: "var(--font-mono)",
-            color: "rgba(255, 255, 255, 0.95)",
-            background: "rgba(0, 0, 0, 0.75)",
-            backdropFilter: "blur(4px)",
+            color: "rgba(255, 255, 255, 0.9)",
+            background: "rgba(9, 13, 22, 0.85)",
+            backdropFilter: "blur(6px)",
             padding: "4px 10px",
-            borderRadius: 6,
+            borderRadius: 4,
+            border: "1px solid rgba(255, 255, 255, 0.1)",
           }}
         >
           <span>
-            REC ● SHOT {String(scene.scene_number).padStart(2, "0")} · {scene.cinematic?.camera || "35mm"}
+            SHOT {String(scene.scene_number).padStart(2, "0")} · {scene.cinematic?.camera || "35mm"}
           </span>
           <span>{scene.cinematic?.lens_suggestion || "50mm"}</span>
         </div>
@@ -68,9 +69,9 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
     );
   }
 
-  // Dynamic Procedural SVG Slate
+  // Dynamic Slate Stage with clean vector grid
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative", background: "#090d16" }}>
+    <div style={{ width: "100%", height: "100%", position: "relative", background: "var(--surface-1)" }}>
       <svg
         viewBox="0 0 800 450"
         style={{ width: "100%", height: "100%", display: "block" }}
@@ -78,69 +79,73 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
       >
         <defs>
           <linearGradient id={`bg-${scene.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={color1} />
-            <stop offset="50%" stopColor={color2} />
-            <stop offset="100%" stopColor="#090d16" />
+            <stop offset="0%" stopColor={color1} stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#050811" />
           </linearGradient>
-          <radialGradient id={`glow-${scene.id}`} cx="50%" cy="30%" r="60%">
-            <stop offset="0%" stopColor={color3} stopOpacity="0.4" />
-            <stop offset="100%" stopColor={color1} stopOpacity="0" />
-          </radialGradient>
         </defs>
 
         <rect width="800" height="450" fill={`url(#bg-${scene.id})`} />
-        <rect width="800" height="450" fill={`url(#glow-${scene.id})`} />
 
-        <line x1="266" y1="0" x2="266" y2="450" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
-        <line x1="533" y1="0" x2="533" y2="450" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
-        <line x1="0" y1="150" x2="800" y2="150" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
-        <line x1="0" y1="300" x2="800" y2="300" stroke="rgba(255,255,255,0.08)" strokeDasharray="4 4" />
+        {/* Crisp Camera Framing Guide */}
+        <rect x="20" y="20" width="760" height="410" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+        <line x1="266" y1="20" x2="266" y2="430" stroke="rgba(255,255,255,0.04)" strokeDasharray="4 4" />
+        <line x1="533" y1="20" x2="533" y2="430" stroke="rgba(255,255,255,0.04)" strokeDasharray="4 4" />
+        <line x1="20" y1="150" x2="780" y2="150" stroke="rgba(255,255,255,0.04)" strokeDasharray="4 4" />
+        <line x1="20" y1="300" x2="780" y2="300" stroke="rgba(255,255,255,0.04)" strokeDasharray="4 4" />
 
-        <path d="M 380 225 L 420 225 M 400 205 L 400 245" stroke="rgba(255,255,255,0.25)" strokeWidth="1" />
-
-        <path d="M 120 380 L 220 260 L 340 380 Z" fill="rgba(0,0,0,0.4)" />
-        <path d="M 450 420 L 520 290 L 680 420 Z" fill="rgba(0,0,0,0.5)" />
-
-        <circle cx="400" cy="200" r="22" fill="rgba(0,0,0,0.7)" />
-        <path d="M 370 230 C 370 230, 400 220, 430 230 L 440 320 L 360 320 Z" fill="rgba(0,0,0,0.7)" />
+        {/* Center Crosshair */}
+        <path d="M 390 225 L 410 225 M 400 215 L 400 235" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
 
         <text
-          x="30"
-          y="45"
-          fill="rgba(255,255,255,0.9)"
-          fontSize="22"
+          x="40"
+          y="60"
+          fill="#ffffff"
+          fontSize="20"
           fontFamily="Bebas Neue, sans-serif"
-          letterSpacing="2"
+          letterSpacing="1"
         >
-          SCENE {scene.scene_number} · {scene.slugline.toUpperCase()}
+          SCENE {String(scene.scene_number).padStart(2, "0")} · {(scene.slugline.split("-")[0] || scene.slugline).trim().toUpperCase()}
         </text>
         <text
-          x="30"
-          y="72"
+          x="40"
+          y="88"
           fill={color3}
-          fontSize="13"
+          fontSize="12"
           fontFamily="Inter, sans-serif"
           fontWeight="600"
         >
-          {scene.cinematic?.camera || "Medium Shot"} | {scene.cinematic?.lighting || "Natural Lighting"}
+          {scene.cinematic?.camera || "Medium Shot"} · {scene.cinematic?.lighting || "Natural Ambient"}
         </text>
+
+        {scene.action_text && (
+          <text
+            x="40"
+            y="390"
+            fill="rgba(255,255,255,0.6)"
+            fontSize="12"
+            fontFamily="Inter, sans-serif"
+          >
+            {(scene.action_text.slice(0, 80) + "...").toUpperCase()}
+          </text>
+        )}
       </svg>
 
       <div
         style={{
           position: "absolute",
-          top: 12,
-          right: 12,
-          background: "rgba(0,0,0,0.6)",
+          top: 10,
+          right: 10,
+          background: "rgba(9, 13, 22, 0.8)",
           backdropFilter: "blur(4px)",
-          padding: "4px 10px",
-          borderRadius: 6,
+          padding: "3px 8px",
+          borderRadius: 4,
           fontSize: 10,
-          color: isGenerating ? "var(--accent-amber)" : "#94a3b8",
+          color: isGenerating ? "var(--accent-amber)" : "var(--text-dim)",
           fontFamily: "var(--font-mono)",
+          border: "1px solid var(--border-soft)",
         }}
       >
-        {isGenerating ? "RENDERING FRAME VIA COMFYUI…" : "CONCEPT PREVIEW"}
+        {isGenerating ? "RENDERING..." : "CONCEPT SLATE"}
       </div>
     </div>
   );
@@ -424,7 +429,7 @@ export default function ImageStub({ kind }) {
                 <div className={styles.header}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <span className={styles.shotBadge}>SHOT {String(scene.scene_number).padStart(2, "0")}</span>
-                    <span className={styles.slugline}>{scene.slugline}</span>
+                    <span className={styles.slugline}>{(scene.slugline.split("-")[0] || scene.slugline).trim()}</span>
                   </div>
                 </div>
 
