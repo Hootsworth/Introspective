@@ -49,8 +49,8 @@ DEFAULT_GEMINI_MODEL = os.environ.get("S2V_GEMINI_MODEL", "gemini-3.1-flash-lite
 # this is a last-resort safety valve.
 MAX_CLOUD_INPUT_CHARS = 6000
 
-# Image generation backend: "sdxl_local" | "comfyui" | "automatic1111" | "none"
-DEFAULT_IMAGE_BACKEND = os.environ.get("S2V_IMAGE_BACKEND", "none")
+# Image generation backend: "flux_klein_4b" | "comfyui" | "automatic1111" | "sdxl_local" | "none"
+DEFAULT_IMAGE_BACKEND = os.environ.get("S2V_IMAGE_BACKEND", "flux_klein_4b")
 COMFYUI_URL = os.environ.get("S2V_COMFYUI_URL", "http://127.0.0.1:8188")
 A1111_URL = os.environ.get("S2V_A1111_URL", "http://127.0.0.1:7860")
 

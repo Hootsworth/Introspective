@@ -213,12 +213,13 @@ export default function Settings({ theme, setTheme }) {
             <label className={styles.label}>Image Backend Engine</label>
             <select
               className={styles.input}
-              value={form.image_backend || "comfyui"}
+              value={form.image_backend || "flux_klein_4b"}
               onChange={(e) => set("image_backend", e.target.value)}
             >
-              <option value="comfyui">ComfyUI (local - recommended)</option>
-              <option value="automatic1111">Automatic1111 (local)</option>
-              <option value="sdxl_local">SDXL / SDXL Turbo (local)</option>
+              <option value="flux_klein_4b">FLUX.2 Klein 4B (Recommended — Fast 4B Transformer)</option>
+              <option value="comfyui">ComfyUI (Local / Node Server)</option>
+              <option value="automatic1111">Automatic1111 (Local WebUI)</option>
+              <option value="sdxl_local">SDXL / SDXL Turbo (Local)</option>
               <option value="none">None / Fallback concept slates</option>
             </select>
           </div>

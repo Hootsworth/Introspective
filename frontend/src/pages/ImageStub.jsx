@@ -40,7 +40,7 @@ function parseColor(colorStr) {
   return "#e2c275";
 }
 
-function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset, aspectRatio }) {
+function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset = "sketch", aspectRatio }) {
   const imageUrl = generatedFrameUrl || scene.generated_image_url;
 
   if (imageUrl) {
@@ -97,7 +97,21 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
     );
   }
 
-  // Dynamic Slate Stage on solid black
+  const presetLabel = {
+    sketch: "PRODUCTION CONCEPT SKETCH",
+    noir: "NEO NOIR CHIAROSCURO",
+    cinematic: "CINEMATIC 35MM",
+    vintage: "KODAK VINTAGE 70S",
+  }[stylePreset] || "PRODUCTION CONCEPT SKETCH";
+
+  const accentStroke = {
+    sketch: "#e2c275",
+    noir: "#f59e0b",
+    cinematic: "#38bdf8",
+    vintage: "#d97706",
+  }[stylePreset] || "#e2c275";
+
+  // Dynamic Slate Stage adapting to stylePreset
   return (
     <div style={{ width: "100%", height: "100%", position: "relative", background: "#000000" }}>
       <svg
@@ -107,15 +121,36 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
       >
         <rect width="800" height="450" fill="#000000" />
 
+        {/* Dynamic Preset Overlay Elements */}
+        {stylePreset === "sketch" && (
+          <g stroke="rgba(226, 194, 117, 0.08)" strokeWidth="1">
+            <line x1="0" y1="0" x2="800" y2="450" strokeDasharray="6 6" />
+            <line x1="800" y1="0" x2="0" y2="450" strokeDasharray="6 6" />
+          </g>
+        )}
+
+        {stylePreset === "vintage" && (
+          <g fill="rgba(255,255,255,0.15)">
+            <rect x="30" y="8" width="12" height="8" rx="2" />
+            <rect x="130" y="8" width="12" height="8" rx="2" />
+            <rect x="230" y="8" width="12" height="8" rx="2" />
+            <rect x="330" y="8" width="12" height="8" rx="2" />
+            <rect x="430" y="8" width="12" height="8" rx="2" />
+            <rect x="530" y="8" width="12" height="8" rx="2" />
+            <rect x="630" y="8" width="12" height="8" rx="2" />
+            <rect x="730" y="8" width="12" height="8" rx="2" />
+          </g>
+        )}
+
         {/* Crisp Camera Framing Guide */}
-        <rect x="20" y="20" width="760" height="410" fill="none" stroke="rgba(226, 194, 117, 0.25)" strokeWidth="1" />
+        <rect x="20" y="20" width="760" height="410" fill="none" stroke={accentStroke} strokeOpacity="0.3" strokeWidth="1" />
         <line x1="266" y1="20" x2="266" y2="430" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
         <line x1="533" y1="20" x2="533" y2="430" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
         <line x1="20" y1="150" x2="780" y2="150" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
         <line x1="20" y1="300" x2="780" y2="300" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
 
         {/* Center Crosshair */}
-        <path d="M 390 225 L 410 225 M 400 215 L 400 235" stroke="#e2c275" strokeWidth="1.5" />
+        <path d="M 390 225 L 410 225 M 400 215 L 400 235" stroke={accentStroke} strokeWidth="1.5" />
 
         <text
           x="40"
@@ -130,7 +165,7 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
         <text
           x="40"
           y="88"
-          fill="#e2c275"
+          fill={accentStroke}
           fontSize="12"
           fontFamily="Inter, sans-serif"
           fontWeight="600"
@@ -161,12 +196,13 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
           padding: "3px 8px",
           borderRadius: 4,
           fontSize: 10,
-          color: isGenerating ? "var(--accent-amber)" : "var(--text-dim)",
+          color: isGenerating ? "var(--accent-amber)" : accentStroke,
           fontFamily: "var(--font-mono)",
           border: "1px solid var(--border-soft)",
+          fontWeight: 600,
         }}
       >
-        {isGenerating ? "RENDERING..." : "CONCEPT SLATE"}
+        {isGenerating ? "RENDERING..." : presetLabel}
       </div>
     </div>
   );
@@ -176,7 +212,7 @@ export default function ImageStub({ kind }) {
   const { project, script, refreshScript } = useOutletContext();
   const [subTab, setSubTab] = useState("grid"); // "grid" | "deck" | "video"
   const [aspectRatio, setAspectRatio] = useState("169");
-  const [stylePreset, setStylePreset] = useState("cinematic");
+  const [stylePreset, setStylePreset] = useState("sketch");
   const [generatingId, setGeneratingId] = useState(null);
   const [generatedFrames, setGeneratedFrames] = useState({});
   const [customPrompts, setCustomPrompts] = useState({});
@@ -208,13 +244,21 @@ export default function ImageStub({ kind }) {
   function getSynthesizedPrompt(scene) {
     if (customPrompts[scene.id]) return customPrompts[scene.id];
 
-    const style = project.style_prompt ? `${project.style_prompt}, ` : "";
-    const camera = scene.cinematic?.camera ? `${scene.cinematic.camera}, ` : "";
-    const lighting = scene.cinematic?.lighting ? `${scene.cinematic.lighting} lighting, ` : "";
+    const presets = {
+      sketch: "Production concept sketch, graphite pencil illustration, detailed line art storyboard",
+      noir: "Neo-noir film still, dramatic high-contrast chiaroscuro lighting, deep shadows",
+      cinematic: "Cinematic 35mm master shot film still, 8k anamorphic resolution, natural lighting",
+      vintage: "Kodak 1970s vintage film stock, Technicolor color grade, film grain",
+    };
+
+    const presetText = presets[stylePreset] || presets.sketch;
+    const style = project.style_prompt ? `, ${project.style_prompt}` : "";
+    const camera = scene.cinematic?.camera ? `, ${scene.cinematic.camera}` : "";
+    const lighting = scene.cinematic?.lighting ? `, ${scene.cinematic.lighting} lighting` : "";
     const palette = (scene.cinematic?.palette || []).join(" & ");
     const paletteStr = palette ? `, color palette ${palette}` : "";
     const action = scene.action_text ? scene.action_text.slice(0, 140) : scene.slugline;
-    return `Cinematic 35mm film still of ${action}. ${style}${camera}${lighting}${stylePreset} style${paletteStr}, 8k highly detailed.`;
+    return `${presetText} of ${action}${style}${camera}${lighting}${paletteStr}, 8k highly detailed.`;
   }
 
   async function handleGenerateFrame(scene) {
@@ -359,9 +403,9 @@ export default function ImageStub({ kind }) {
           <div className={styles.controlGroup}>
             <label className={styles.label}>Style Filter Preset:</label>
             <select className={styles.select} value={stylePreset} onChange={(e) => setStylePreset(e.target.value)}>
-              <option value="cinematic">Cinematic 35mm</option>
+              <option value="sketch">Production Concept Sketch (Default)</option>
               <option value="noir">Neo Noir High-Contrast</option>
-              <option value="sketch">Production Concept Sketch</option>
+              <option value="cinematic">Cinematic 35mm</option>
               <option value="vintage">Kodak Vintage Color</option>
             </select>
           </div>
@@ -494,12 +538,12 @@ export default function ImageStub({ kind }) {
             </div>
             <p style={{ color: "var(--text-dim)", fontSize: 14, margin: "0 0 20px" }}>
               Visual style directions derived from your project style prompt (
-              <em style={{ color: "var(--text)" }}>{project.style_prompt || "Default cinematic"}</em>) and scene color palettes.
+              <em style={{ color: "var(--text)" }}>{project.style_prompt || "Default concept sketch"}</em>) and scene color palettes.
             </p>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
               {script.scenes.map((s) => {
-                const rawPalette = s.cinematic?.palette || ["#0a0a0a", "#121212", "#e2c275"];
+                const rawPalette = s.cinematic?.palette || ["#0a0a0a", "#141414", "#e2c275"];
                 return (
                   <div
                     key={s.id}
@@ -571,7 +615,7 @@ export default function ImageStub({ kind }) {
               position: "fixed",
               inset: 0,
               zIndex: 9999,
-              background: "rgba(5, 7, 13, 0.94)",
+              background: "rgba(0, 0, 0, 0.95)",
               backdropFilter: "blur(12px)",
               display: "flex",
               flexDirection: "column",
@@ -761,7 +805,7 @@ export default function ImageStub({ kind }) {
                     marginBottom: 4,
                   }}
                 >
-                  Prompt Synthesis
+                  Prompt Synthesis ({stylePreset.toUpperCase()})
                 </div>
                 <div style={{ fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text-dim)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {prompt}
