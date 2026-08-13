@@ -148,12 +148,26 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
         ctx.drawImage(img, -w / 2, -h / 2, w, h);
       } else {
         // Flat Slate Graphic fallback
-        const palette = shot.palette || ["#0a0a0a", "#121212", "#e2c275"];
-        const grad = ctx.createLinearGradient(0, 0, w, h);
-        grad.addColorStop(0, palette[0] || "#0a0a0a");
-        grad.addColorStop(0.5, palette[1] || "#121212");
-        grad.addColorStop(1, "#000000");
-        ctx.fillStyle = grad;
+        const palette = shot.palette || [];
+        const safeC0 = (c) => {
+          if (!c || typeof c !== "string") return "#0a0a0a";
+          c = c.trim();
+          if (c.startsWith("#") && (c.length === 4 || c.length === 7)) return c;
+          return "#0a0a0a";
+        };
+
+        const c0 = safeC0(palette[0]);
+        const c1 = safeC0(palette[1]);
+
+        try {
+          const grad = ctx.createLinearGradient(0, 0, w, h);
+          grad.addColorStop(0, c0);
+          grad.addColorStop(0.5, c1);
+          grad.addColorStop(1, "#000000");
+          ctx.fillStyle = grad;
+        } catch {
+          ctx.fillStyle = "#000000";
+        }
         ctx.fillRect(0, 0, w, h);
 
         // Rule of thirds grid
