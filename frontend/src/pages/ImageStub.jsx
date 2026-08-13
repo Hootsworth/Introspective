@@ -40,11 +40,18 @@ function parseColor(colorStr) {
   return "#e2c275";
 }
 
+function getFullImageUrl(url) {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  const baseHost = api.base || "http://127.0.0.1:8420";
+  return `${baseHost}${url}`;
+}
+
 function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset = "sketch", aspectRatio }) {
   const imageUrl = generatedFrameUrl || scene.generated_image_url;
 
   if (imageUrl) {
-    const fullUrl = imageUrl.startsWith("http") ? imageUrl : `${api.base}${imageUrl}`;
+    const fullUrl = getFullImageUrl(imageUrl);
     return (
       <div style={{ width: "100%", height: "100%", position: "relative", overflow: "hidden" }}>
         <img
