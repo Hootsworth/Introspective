@@ -1,6 +1,5 @@
 import { useOutletContext } from "react-router-dom";
 import { EmptyState } from "../components/ui";
-import uiStyles from "../components/ui.module.css";
 import styles from "./CharacterExplorer.module.css";
 
 export default function CharacterExplorer() {
@@ -22,26 +21,36 @@ export default function CharacterExplorer() {
   return (
     <div className={styles.wrap}>
       <div className={styles.list}>
-        {characters.map((c) => (
-          <div key={c.id} className={`${uiStyles.card} ${styles.row}`}>
-            <div className={styles.avatar}>{c.name.charAt(0)}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div className={styles.name}>{c.name}</div>
-              {c.aliases.length > 0 && <div className={styles.aliases}>aka {c.aliases.join(", ")}</div>}
-              <div className={styles.bar} style={{ width: `${(c.dialogue_count / maxDialogue) * 100}%` }} />
-            </div>
-            <div className={styles.stats}>
-              <div>
-                <div className={styles.statNum}>{c.dialogue_count}</div>
-                <div className={styles.statLabel}>Lines</div>
+        {characters.map((c) => {
+          const avatarUrl = `https://api.dicebear.com/7.x/open-peeps/svg?seed=${encodeURIComponent(c.name)}&backgroundColor=090d16,1e293b,0284c7`;
+
+          return (
+            <div key={c.id} className={styles.card}>
+              <div className={styles.avatarWrap}>
+                <img src={avatarUrl} alt={c.name} className={styles.avatarImg} />
               </div>
-              <div>
-                <div className={styles.statNum}>{c.scene_count}</div>
-                <div className={styles.statLabel}>Scenes</div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className={styles.nameRow}>
+                  <span className={styles.name}>{c.name}</span>
+                  {c.aliases.length > 0 && <span className={styles.aliasBadge}>aka {c.aliases.join(", ")}</span>}
+                </div>
+                <div className={styles.barTrack}>
+                  <div className={styles.barFill} style={{ width: `${(c.dialogue_count / maxDialogue) * 100}%` }} />
+                </div>
+              </div>
+              <div className={styles.stats}>
+                <div>
+                  <div className={styles.statNum}>{c.dialogue_count}</div>
+                  <div className={styles.statLabel}>Lines</div>
+                </div>
+                <div>
+                  <div className={styles.statNum}>{c.scene_count}</div>
+                  <div className={styles.statLabel}>Scenes</div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

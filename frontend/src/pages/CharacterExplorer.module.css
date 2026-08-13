@@ -1,68 +1,106 @@
 .wrap {
   padding: 0 32px 40px;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 760px;
+  gap: 14px;
+  max-width: 820px;
 }
 
-.row {
+.card {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 14px 18px;
+  padding: 16px 20px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
 }
 
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent-amber-soft), var(--accent-teal-soft));
+.card:hover {
+  border-color: var(--accent-cyan);
+}
+
+.avatarWrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-display);
-  font-size: 17px;
-  color: var(--text);
   flex-shrink: 0;
+}
+
+.avatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 
 .name {
   font-weight: 700;
-  font-size: 14.5px;
+  font-size: 15px;
+  color: var(--text);
 }
 
-.aliases {
-  font-size: 11.5px;
-  color: var(--text-faint);
+.aliasBadge {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.barTrack {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-1);
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent-cyan);
+  transition: width 0.3s ease;
 }
 
 .stats {
   margin-left: auto;
   display: flex;
-  gap: 22px;
+  gap: 20px;
   text-align: right;
 }
 
 .statNum {
   font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--text);
 }
 
 .statLabel {
   font-size: 10px;
-  color: var(--text-faint);
+  color: var(--text-dim);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-
-.bar {
-  height: 5px;
-  border-radius: 3px;
-  background: var(--accent-amber);
-  margin-top: 8px;
+  font-weight: 600;
 }

@@ -51,7 +51,7 @@ export default function Sidebar({ projects }) {
     { to: "storyboard", icon: "storyboard", label: "Storyboard Studio" },
     { to: "moodboard", icon: "moodboard", label: "Mood Board" },
     { to: "characters", icon: "characters", label: "Characters" },
-    { to: "graph", icon: "graph", label: "Relationship Graph" },
+    { to: "graph", icon: "graph", label: "Relationships" },
     { to: "exports", icon: "exports", label: "Exports" },
   ];
 

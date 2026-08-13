@@ -1,14 +1,47 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { api } from "../api/client";
-import ComfyUITestSuite from "../components/ComfyUITestSuite";
 import PitchDeckViewer from "../components/PitchDeckViewer";
 import AnimaticPlayer from "../components/AnimaticPlayer";
-import { Button, EmptyState, Pill } from "../components/ui";
+import { Button, Pill } from "../components/ui";
 import styles from "./Storyboard.module.css";
 
+function parseColor(colorStr) {
+  if (!colorStr) return "#38bdf8";
+  colorStr = colorStr.trim();
+  if (colorStr.startsWith("#")) return colorStr;
+  if (/^[0-9a-fA-F]{3,6}$/.test(colorStr)) return `#${colorStr}`;
+  const knownColors = {
+    red: "#ef4444",
+    blue: "#3b82f6",
+    green: "#10b981",
+    yellow: "#eab308",
+    amber: "#f59e0b",
+    cyan: "#06b6d4",
+    teal: "#14b8a6",
+    purple: "#a855f7",
+    orange: "#f97316",
+    gold: "#d97706",
+    black: "#1e293b",
+    dark: "#0f172a",
+    shadow: "#334155",
+    slate: "#475569",
+    gray: "#64748b",
+    grey: "#64748b",
+    white: "#f8fafc",
+    warm: "#f59e0b",
+    cold: "#3b82f6",
+    neon: "#10b981",
+  };
+  const lower = colorStr.toLowerCase();
+  for (const [key, hex] of Object.entries(knownColors)) {
+    if (lower.includes(key)) return hex;
+  }
+  return "#0284c7";
+}
+
 function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset, aspectRatio }) {
-  const palette = scene.cinematic?.palette || ["#0f172a", "#1e293b", "#334155", "#0284c7"];
+  const palette = (scene.cinematic?.palette || []).map(parseColor);
   const color1 = palette[0] || "#0f172a";
   const color2 = palette[1] || "#1e293b";
   const color3 = palette[2] || "#38bdf8";
@@ -161,21 +194,13 @@ export default function ImageStub({ kind }) {
   const [customPrompts, setCustomPrompts] = useState({});
   const [expandedPrompts, setExpandedPrompts] = useState({});
   const [renderError, setRenderError] = useState(null);
-  const [showTestSuite, setShowTestSuite] = useState(false);
-  const [comfyStatus, setComfyStatus] = useState(null);
 
-
-  useEffect(() => {
-    api.getComfyUIStatus().then(setComfyStatus).catch(() => {});
-  }, []);
-
-  if (!script || !script.scenes || !script.scenes.length) {
+  if (!script || !script.scenes.length) {
     return (
       <div className={styles.wrap}>
-        <EmptyState
-          title={`No ${kind === "storyboard" ? "storyboards" : "mood board"} generated yet`}
-          body="Upload a screenplay in Script Viewer first so Introspective can extract scene details, camera angles, and visual style prompts."
-        />
+        <p style={{ color: "var(--text-dim)" }}>
+          Upload a screenplay first in the Script Viewer tab.
+        </p>
       </div>
     );
   }
@@ -228,71 +253,6 @@ export default function ImageStub({ kind }) {
 
   return (
     <div className={styles.wrap}>
-      {/* Top Integration & Telemetry Status Bar */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: "var(--surface-2)",
-          border: "1px solid var(--border-soft)",
-          padding: "10px 16px",
-          borderRadius: 10,
-          marginBottom: 16,
-          fontSize: 13,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontWeight: 600 }}>ComfyUI Integration Status:</span>
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-              padding: "3px 10px",
-              borderRadius: 12,
-              fontSize: 12,
-              fontWeight: 600,
-              background: comfyStatus?.reachable ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
-              color: comfyStatus?.reachable ? "#10b981" : "#ef4444",
-            }}
-          >
-            ● {comfyStatus?.reachable ? `Live (${comfyStatus.url})` : "Offline / Unreachable"}
-          </span>
-          {comfyStatus?.latency_ms && (
-            <span style={{ color: "var(--text-dim)", fontSize: 11.5, fontFamily: "var(--font-mono)" }}>
-              {comfyStatus.latency_ms}ms
-            </span>
-          )}
-        </div>
-
-        <div style={{ display: "flex", gap: 8 }}>
-          <Button
-            ghost
-            onClick={() => setShowTestSuite(!showTestSuite)}
-            style={{ fontSize: 12, padding: "5px 12px" }}
-          >
-            {showTestSuite ? "Hide Integration Test Suite" : "Run Live Test Suite"}
-          </Button>
-          <Button
-            primary
-            onClick={handleBatchRender}
-            disabled={generatingId !== null}
-            style={{ fontSize: 12, padding: "5px 12px" }}
-          >
-            Render All Frames with ComfyUI
-          </Button>
-        </div>
-      </div>
-
-      {/* Embedded Live Test Suite Drawer */}
-      {showTestSuite && (
-        <ComfyUITestSuite
-          comfyUrl={comfyStatus?.url || "http://127.0.0.1:8188"}
-          onTestComplete={() => api.getComfyUIStatus().then(setComfyStatus)}
-        />
-      )}
-
       {/* Error alert banner if render fails */}
       {renderError && (
         <div
@@ -304,15 +264,9 @@ export default function ImageStub({ kind }) {
             borderRadius: "8px",
             marginBottom: "16px",
             fontSize: "13.5px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
           }}
         >
-          <span>{renderError}</span>
-          <Button ghost style={{ fontSize: 12 }} onClick={() => setShowTestSuite(true)}>
-            Open Test Suite Diagnostics
-          </Button>
+          {renderError}
         </div>
       )}
 
@@ -413,7 +367,19 @@ export default function ImageStub({ kind }) {
           </div>
 
           <div style={{ marginLeft: "auto", display: "flex", gap: 10 }}>
-            <Button onClick={() => window.print()}>Export Storyboard Sheet</Button>
+            {kind === "storyboard" && (
+              <Button
+                primary
+                onClick={handleBatchRender}
+                disabled={generatingId !== null}
+                style={{ fontSize: 12 }}
+              >
+                Render All Frames
+              </Button>
+            )}
+            <Button onClick={() => window.print()} style={{ fontSize: 12 }}>
+              Export Sheet
+            </Button>
           </div>
         </div>
       )}
@@ -515,40 +481,61 @@ export default function ImageStub({ kind }) {
               <em style={{ color: "var(--text)" }}>{project.style_prompt || "Default cinematic"}</em>) and scene color palettes.
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
-              {script.scenes.map((s) => (
-                <div
-                  key={s.id}
-                  style={{
-                    background: "var(--surface-2)",
-                    border: "1px solid var(--border-soft)",
-                    borderRadius: 12,
-                    padding: 16,
-                  }}
-                >
-                  <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
-                    Scene {s.scene_number}: {s.slugline}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+              {script.scenes.map((s) => {
+                const rawPalette = s.cinematic?.palette || ["#0f172a", "#1e293b", "#38bdf8"];
+                return (
+                  <div
+                    key={s.id}
+                    style={{
+                      background: "var(--surface-2)",
+                      border: "1px solid var(--border-soft)",
+                      borderRadius: 8,
+                      padding: 16,
+                    }}
+                  >
+                    <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
+                      SHOT {String(s.scene_number).padStart(2, "0")}: {(s.slugline.split("-")[0] || s.slugline).trim()}
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 12 }}>
+                      Lighting: {s.cinematic?.lighting || "Natural Ambient"}
+                    </div>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                      {rawPalette.map((colorName, i) => {
+                        const hex = parseColor(colorName);
+                        return (
+                          <div
+                            key={i}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 6,
+                              background: "var(--surface-1)",
+                              border: "1px solid var(--border-soft)",
+                              borderRadius: 4,
+                              padding: "3px 8px",
+                            }}
+                          >
+                            <span
+                              style={{
+                                width: 14,
+                                height: 14,
+                                borderRadius: 3,
+                                background: hex,
+                                display: "inline-block",
+                                border: "1px solid rgba(255,255,255,0.2)",
+                              }}
+                            />
+                            <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text)" }}>
+                              {hex}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 10 }}>
-                    Lighting: {s.cinematic?.lighting || "Natural"}
-                  </div>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    {(s.cinematic?.palette || ["#1e293b", "#334155", "#475569"]).map((c, i) => (
-                      <div
-                        key={i}
-                        style={{
-                          width: 24,
-                          height: 24,
-                          borderRadius: 6,
-                          background: c,
-                          border: "1px solid var(--border)",
-                        }}
-                        title={c}
-                      />
-                    ))}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
