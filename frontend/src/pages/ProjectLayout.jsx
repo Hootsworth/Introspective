@@ -1,19 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { Outlet, useParams, useNavigate, NavLink } from "react-router-dom";
+import { Outlet, useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import TopBar from "../components/TopBar";
-
-const NAV_ITEMS = [
-  { path: "script", label: "Script Viewer" },
-  { path: "scenes", label: "Scene Explorer" },
-  { path: "storyboard", label: "Storyboard Studio" },
-  { path: "moodboard", label: "Mood Board" },
-  { path: "shotlist", label: "Shot List" },
-  { path: "characters", label: "Characters" },
-  { path: "graph", label: "Relationship Graph" },
-  { path: "notes", label: "Director Notes" },
-  { path: "exports", label: "Exports" },
-];
 
 export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
   const { projectId } = useParams();
@@ -113,42 +101,7 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
         subtitle={project.style_prompt || "No visual style set"}
         theme={theme}
         setTheme={setTheme}
-        backTo="/"
-        backLabel="Projects"
       />
-      <div
-        style={{
-          display: "flex",
-          gap: 4,
-          margin: "0 32px 24px",
-          padding: 4,
-          overflowX: "auto",
-          background: "var(--surface-2)",
-          border: "1px solid var(--border-soft)",
-          borderRadius: 8,
-        }}
-      >
-        {NAV_ITEMS.map((item) => (
-          <NavLink
-            key={item.path}
-            to={`/projects/${projectId}/${item.path}`}
-            style={({ isActive }) => ({
-              padding: "6px 14px",
-              fontSize: 12.5,
-              fontWeight: isActive ? 600 : 500,
-              borderRadius: 6,
-              textDecoration: "none",
-              background: isActive ? "var(--surface-1)" : "transparent",
-              color: isActive ? "var(--accent-cyan)" : "var(--text-dim)",
-              border: "1px solid " + (isActive ? "rgba(56, 189, 248, 0.3)" : "transparent"),
-              whiteSpace: "nowrap",
-              transition: "all 0.15s ease",
-            })}
-          >
-            {item.label}
-          </NavLink>
-        ))}
-      </div>
       <Outlet
         context={{
           project, scripts, script, activeScriptId, setActiveScriptId,

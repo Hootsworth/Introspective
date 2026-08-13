@@ -166,7 +166,7 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
                         navigate(`/projects/${p.id}/script`);
                       }}
                     >
-                      Open Project
+                      Open
                     </button>
                     <button
                       className={styles.actionBtn}

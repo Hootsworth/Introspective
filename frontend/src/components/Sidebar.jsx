@@ -1,8 +1,7 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 
 const ICONS = {
-  dashboard: "M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6V11h-6v9Zm0-16v5h6V4h-6Z",
   script: "M6 2h9l5 5v15H6V2Zm8 1.5V8h4.5L14 3.5ZM8 12h8v1.5H8V12Zm0 4h8v1.5H8V16Zm0-8h4v1.5H8V8Z",
   scenes: "M3 5h18v3H3V5Zm0 5.5h18v3H3v-3ZM3 16h18v3H3v-3Z",
   characters: "M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 12c5 0 9 2.5 9 6v2H3v-2c0-3.5 4-6 9-6Z",
@@ -24,7 +23,18 @@ function Icon({ name }) {
   );
 }
 
+function IconLeave() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
+    </svg>
+  );
+}
+
 export default function Sidebar({ projects }) {
+  const navigate = useNavigate();
   const location = useLocation();
   const match = location.pathname.match(/\/projects\/([^\/]+)/);
   const projectId = match ? match[1] : null;
@@ -52,20 +62,10 @@ export default function Sidebar({ projects }) {
         <span className={styles.brandText}>Introspective</span>
       </div>
 
-      <nav className={styles.section}>
-        <div className={styles.sectionLabel}>PLATFORM</div>
-        <NavLink to="/" end className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
-          <Icon name="dashboard" /> Dashboard
-        </NavLink>
-        <NavLink to="/settings" className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
-          <Icon name="settings" /> Settings
-        </NavLink>
-      </nav>
-
       {activeProject && (
         <>
           <nav className={styles.section}>
-            <div className={styles.sectionLabel}>PRE-PRODUCTION · {activeProject.title.toUpperCase()}</div>
+            <div className={styles.sectionLabel}>PRE-PRODUCTION</div>
             {preProdNav.map((item) => (
               <NavLink
                 key={item.to}
@@ -92,7 +92,18 @@ export default function Sidebar({ projects }) {
         </>
       )}
 
+      <nav className={styles.section}>
+        <div className={styles.sectionLabel}>SETTINGS</div>
+        <NavLink to="/settings" className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
+          <Icon name="settings" /> Settings
+        </NavLink>
+      </nav>
+
       <div className={styles.spacer} />
+
+      <button className={styles.leaveBtn} onClick={() => navigate("/")}>
+        <IconLeave /> Leave Project
+      </button>
     </aside>
   );
 }

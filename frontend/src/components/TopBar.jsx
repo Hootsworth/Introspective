@@ -10,7 +10,7 @@ function IconBack() {
   );
 }
 
-export default function TopBar({ title, subtitle, theme, setTheme, right, backTo, backLabel }) {
+export default function TopBar({ title, subtitle, right, backTo, backLabel }) {
   const navigate = useNavigate();
   return (
     <div className={styles.bar}>
@@ -22,27 +22,29 @@ export default function TopBar({ title, subtitle, theme, setTheme, right, backTo
             </span>
           </button>
         )}
-        <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <h1 className={styles.title}>{title}</h1>
-          {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+          {subtitle && (
+            <span
+              style={{
+                fontSize: 11.5,
+                fontWeight: 600,
+                fontFamily: "var(--font-mono)",
+                color: "var(--accent-cyan)",
+                background: "rgba(56, 189, 248, 0.12)",
+                border: "1px solid rgba(56, 189, 248, 0.25)",
+                padding: "2px 8px",
+                borderRadius: 4,
+                display: "inline-block",
+              }}
+            >
+              {subtitle}
+            </span>
+          )}
         </div>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {right}
-        <div className={styles.toggle}>
-          <button
-            className={`${styles.toggleBtn} ${theme === "light" ? styles.toggleBtnActive : ""}`}
-            onClick={() => setTheme("light")}
-          >
-            Light
-          </button>
-          <button
-            className={`${styles.toggleBtn} ${theme === "dark" ? styles.toggleBtnActive : ""}`}
-            onClick={() => setTheme("dark")}
-          >
-            Dark
-          </button>
-        </div>
       </div>
     </div>
   );

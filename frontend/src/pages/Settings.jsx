@@ -99,6 +99,27 @@ export default function Settings({ theme, setTheme }) {
       />
       <div className={styles.wrap}>
         <div className={styles.section}>
+          <div className={styles.sectionTitle}>Appearance & Theme</div>
+          <div className={styles.sectionDesc}>Customize application color scheme and UI aesthetic.</div>
+          <div className={styles.modeRow}>
+            <button
+              type="button"
+              className={`${styles.modeBtn} ${theme === "dark" ? styles.modeBtnActive : ""}`}
+              onClick={() => setTheme("dark")}
+            >
+              Dark Mode (Default)
+            </button>
+            <button
+              type="button"
+              className={`${styles.modeBtn} ${theme === "light" ? styles.modeBtnActive : ""}`}
+              onClick={() => setTheme("light")}
+            >
+              Light Mode
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.section}>
           <div className={styles.sectionTitle}>Local Inference</div>
           <div className={styles.sectionDesc}>
             Via Ollama at localhost:11434.{" "}
