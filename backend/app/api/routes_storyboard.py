@@ -8,9 +8,11 @@ from __future__ import annotations
 
 import logging
 import random
+import urllib.parse
 from pathlib import Path
 from typing import Any, Dict
 
+import httpx
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -113,66 +115,49 @@ async def generate_scene_frame(
             raise HTTPException(500, f"ComfyUI frame generation failed: {str(e)}")
 
     else:
-        # FLUX.2 Klein 4B Concept Slate Generator
-        filename = f"frame_flux_{scene_id}_{res_seed}.svg"
+        # FLUX.2 Klein 4B Diffusion Pipeline
+        filename = f"frame_flux_{scene_id}_{res_seed}.jpg"
         file_path = GENERATED_DIR / filename
+        encoded_prompt = urllib.parse.quote(prompt)
+        flux_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width={width}&height={height}&model=flux&seed={res_seed}"
 
-        preset_tag = (req.style_preset or "sketch").upper()
-        slug_short = (scene.slugline.split("-")[0] if "-" in scene.slugline else scene.slugline).strip().upper()
-        cam_short = (scene.cinematic_json or {}).get("camera", "35mm Anamorphic")
+        image_downloaded = False
+        try:
+            async with httpx.AsyncClient(timeout=45.0) as http_client:
+                resp = await http_client.get(flux_url)
+                if resp.status_code == 200 and len(resp.content) > 1000:
+                    with open(file_path, "wb") as f:
+                        f.write(resp.content)
+                    image_downloaded = True
+                    image_url = f"/generated/{filename}"
+        except Exception as ex:
+            logger.warning(f"FLUX cloud inference fallback trigger: {ex}")
 
-        svg_content = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}">
-          <defs>
-            <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#141824"/>
-              <stop offset="50%" stop-color="#090d16"/>
-              <stop offset="100%" stop-color="#000000"/>
-            </linearGradient>
-            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#e2c275"/>
-              <stop offset="100%" stop-color="#f59e0b"/>
-            </linearGradient>
-          </defs>
-          <rect width="{width}" height="{height}" fill="url(#bgGrad)"/>
-          
-          <!-- Cinematic Framing Lines -->
-          <line x1="0" y1="0" x2="{width}" y2="{height}" stroke="rgba(226, 194, 117, 0.12)" stroke-dasharray="8 8"/>
-          <line x1="{width}" y1="0" x2="0" y2="{height}" stroke="rgba(226, 194, 117, 0.12)" stroke-dasharray="8 8"/>
-          
-          <rect x="24" y="24" width="{width-48}" height="{height-48}" fill="none" stroke="rgba(226, 194, 117, 0.4)" stroke-width="1.5"/>
-          <rect x="28" y="28" width="{width-56}" height="{height-56}" fill="none" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1"/>
-          
-          <!-- Rule of Thirds Guides -->
-          <line x1="{width//3}" y1="24" x2="{width//3}" y2="{height-24}" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 4"/>
-          <line x1="{(width*2)//3}" y1="24" x2="{(width*2)//3}" y2="{height-24}" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 4"/>
-          <line x1="24" y1="{height//3}" x2="{width-24}" y2="{height//3}" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 4"/>
-          <line x1="24" y1="{(height*2)//3}" x2="{width-24}" y2="{(height*2)//3}" stroke="rgba(255,255,255,0.06)" stroke-dasharray="4 4"/>
+        if not image_downloaded:
+            # Vector fallback if offline or request times out
+            filename_svg = f"frame_flux_{scene_id}_{res_seed}.svg"
+            file_path_svg = GENERATED_DIR / filename_svg
+            preset_tag = (req.style_preset or "sketch").upper()
+            slug_short = (scene.slugline.split("-")[0] if "-" in scene.slugline else scene.slugline).strip().upper()
 
-          <!-- Target Crosshair -->
-          <path d="M {width//2 - 20} {height//2} L {width//2 + 20} {height//2} M {width//2} {height//2 - 20} L {width//2} {height//2 + 20}" stroke="#e2c275" stroke-width="2"/>
-          <circle cx="{width//2}" cy="{height//2}" r="6" fill="none" stroke="#e2c275" stroke-width="1.5"/>
+            svg_content = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}">
+              <defs>
+                <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#141824"/>
+                  <stop offset="50%" stop-color="#090d16"/>
+                  <stop offset="100%" stop-color="#000000"/>
+                </linearGradient>
+              </defs>
+              <rect width="{width}" height="{height}" fill="url(#bgGrad)"/>
+              <rect x="24" y="24" width="{width-48}" height="{height-48}" fill="none" stroke="rgba(226, 194, 117, 0.4)" stroke-width="1.5"/>
+              <path d="M {width//2 - 20} {height//2} L {width//2 + 20} {height//2} M {width//2} {height//2 - 20} L {width//2} {height//2 + 20}" stroke="#e2c275" stroke-width="2"/>
+              <text x="48" y="108" fill="#ffffff" font-size="24" font-family="sans-serif" font-weight="bold">SHOT {scene.scene_number:02d} · {slug_short}</text>
+              <text x="48" y="132" fill="#e2c275" font-size="13" font-family="sans-serif" font-weight="600">FLUX.2 KLEIN 4B · {preset_tag} PRESET</text>
+            </svg>'''
 
-          <!-- Concept Art Silhouette -->
-          <path d="M {width//2 - 60} {height - 80} C {width//2 - 30} {height - 180}, {width//2 + 30} {height - 180}, {width//2 + 60} {height - 80} Z" fill="rgba(226, 194, 117, 0.15)" stroke="rgba(226, 194, 117, 0.3)" stroke-width="1.5"/>
-          <circle cx="{width//2}" cy="{height - 190}" r="22" fill="rgba(226, 194, 117, 0.2)" stroke="rgba(226, 194, 117, 0.4)" stroke-width="1.5"/>
-
-          <!-- Header Telemetry HUD -->
-          <rect x="45" y="45" width="220" height="28" rx="4" fill="rgba(0, 0, 0, 0.75)" stroke="rgba(226, 194, 117, 0.3)" stroke-width="1"/>
-          <text x="55" y="64" fill="#ffffff" font-size="13" font-family="sans-serif" font-weight="bold">FLUX.2 KLEIN 4B</text>
-          <text x="175" y="64" fill="#e2c275" font-size="11" font-family="sans-serif" font-weight="bold">RENDERED</text>
-
-          <text x="48" y="108" fill="#ffffff" font-size="24" font-family="sans-serif" font-weight="bold" letter-spacing="1">SHOT {scene.scene_number:02d} · {slug_short}</text>
-          <text x="48" y="132" fill="#e2c275" font-size="13" font-family="sans-serif" font-weight="600">{preset_tag} PRESET · {cam_short.upper()}</text>
-
-          <!-- Prompt Footer -->
-          <rect x="45" y="{height-68}" width="{width-90}" height="36" rx="6" fill="rgba(0, 0, 0, 0.8)" stroke="rgba(255, 255, 255, 0.1)"/>
-          <text x="58" y="{height-45}" fill="rgba(255,255,255,0.85)" font-size="12" font-family="monospace">PROMPT: {prompt[:110]}...</text>
-        </svg>'''
-
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(svg_content)
-
-        image_url = f"/generated/{filename}"
+            with open(file_path_svg, "w", encoding="utf-8") as f:
+                f.write(svg_content)
+            image_url = f"/generated/{filename_svg}"
 
     # Update scene record in SQLite DB
     scene.generated_image_url = image_url

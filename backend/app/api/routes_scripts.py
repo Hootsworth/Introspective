@@ -27,6 +27,7 @@ def _scene_to_out(s: Scene) -> SceneOut:
         tension_score=s.tension_score, pacing_score=s.pacing_score,
         themes=s.themes or [], genre_tags=s.genre_tags or [],
         cinematic=s.cinematic_json or {}, director_notes=s.director_notes or "",
+        generated_image_url=s.generated_image_url,
         analyzed=bool(s.analyzed),
     )
 
