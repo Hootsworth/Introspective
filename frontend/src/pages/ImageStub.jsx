@@ -1,3 +1,6 @@
+/**
+ * Storyboard Studio & Project Mood Board Component
+ */
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { api } from "../api/client";
