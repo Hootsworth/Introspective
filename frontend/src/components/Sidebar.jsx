@@ -58,7 +58,7 @@ export default function Sidebar({ projects }) {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.brand}>
-        <span className={styles.slate} aria-hidden="true" />
+        <img src="/logo.png" className={styles.brandIcon} alt="Introspective Logo" />
         <span className={styles.brandText}>Introspective</span>
       </div>
 

@@ -1,27 +1,42 @@
+import { useState, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
-import { EmptyState, Pill } from "../components/ui";
-import uiStyles from "../components/ui.module.css";
-import styles from "./ScriptViewer.module.css"; // reuse .wrap
+import { EmptyState, Button } from "../components/ui";
+import styles from "./DirectorNotes.module.css";
 
 export default function DirectorNotes() {
   const { script } = useOutletContext();
+  const [search, setSearch] = useState("");
+
+  const analyzedScenes = useMemo(() => {
+    if (!script) return [];
+    return script.scenes.filter((s) => s.analyzed && s.director_notes);
+  }, [script]);
+
+  const filteredScenes = useMemo(() => {
+    if (!search.trim()) return analyzedScenes;
+    const q = search.toLowerCase();
+    return analyzedScenes.filter(
+      (s) =>
+        s.slugline.toLowerCase().includes(q) ||
+        s.director_notes.toLowerCase().includes(q) ||
+        (s.dominant_emotion || "").toLowerCase().includes(q)
+    );
+  }, [analyzedScenes, search]);
 
   if (!script || !script.scenes.length) {
     return (
       <div className={styles.wrap}>
-        <p style={{ color: "var(--text-dim)" }}>Upload a screenplay first.</p>
+        <p style={{ color: "var(--text-dim)" }}>Upload a screenplay first to generate director notes.</p>
       </div>
     );
   }
 
-  const analyzed = script.scenes.filter((s) => s.analyzed && s.director_notes);
-
-  if (!analyzed.length) {
+  if (!analyzedScenes.length) {
     return (
       <div className={styles.wrap}>
         <EmptyState
           title="No director notes yet"
-          body="Notes are generated alongside cinematic analysis for each scene. Run Analyze All Scenes in Script Viewer or Scene Explorer to populate this page."
+          body="Director vision notes are synthesized automatically alongside cinematic analysis for each scene. Run 'Analyze All Scenes' in Script Viewer or Scene Explorer to build your director's journal."
         />
       </div>
     );
@@ -29,28 +44,47 @@ export default function DirectorNotes() {
 
   return (
     <div className={styles.wrap}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, maxWidth: 760 }}>
-        {analyzed.map((s) => (
-          <div key={s.id} className={uiStyles.card} style={{ padding: "18px 22px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-              <span style={{
-                fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 700,
-                color: "var(--accent-amber)", background: "var(--accent-amber-soft)",
-                borderRadius: 5, padding: "2px 7px",
-              }}>
-                {String(s.scene_number).padStart(2, "0")}
-              </span>
-              <span style={{ fontWeight: 700, fontSize: 13.5 }}>{s.slugline}</span>
-              <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
-                <Pill tone="amber">{s.dominant_emotion}</Pill>
+      {/* Controls & Search Toolbar */}
+      <div className={styles.controlsBar}>
+        <input
+          className={styles.searchInput}
+          type="text"
+          placeholder="Filter notes by keyword, location, or emotion..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <span style={{ fontSize: 12, color: "var(--text-dim)" }}>
+          Showing {filteredScenes.length} of {analyzedScenes.length} scene notes
+        </span>
+        <div style={{ marginLeft: "auto" }}>
+          <Button ghost onClick={() => window.print()} style={{ fontSize: 12 }}>
+            Export Director Journal
+          </Button>
+        </div>
+      </div>
+
+      {/* Director Notes Journal Cards */}
+      <div className={styles.notesGrid}>
+        {filteredScenes.map((s) => (
+          <div key={s.id} className={styles.noteCard}>
+            <div className={styles.noteHeader}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0, flex: 1 }}>
+                <span className={styles.shotBadge}>SHOT {String(s.scene_number).padStart(2, "0")}</span>
+                <span className={styles.sluglineText}>{(s.slugline.split("-")[0] || s.slugline).trim()}</span>
               </div>
+              {s.dominant_emotion && (
+                <span className={styles.emotionBadge}>{s.dominant_emotion}</span>
+              )}
             </div>
-            <div style={{
-              fontSize: 13.5, lineHeight: 1.65, color: "var(--text)",
-              borderLeft: "3px solid var(--accent-amber)", background: "var(--surface-2)",
-              padding: "10px 14px", borderRadius: "0 8px 8px 0",
-            }}>
-              {s.director_notes}
+
+            <div className={styles.noteBody}>
+              "{s.director_notes}"
+            </div>
+
+            <div className={styles.notesFooter}>
+              {s.cinematic?.camera && <span className={styles.tagBadge}>Camera: {s.cinematic.camera}</span>}
+              {s.cinematic?.lighting && <span className={styles.tagBadge}>Lighting: {s.cinematic.lighting}</span>}
+              {s.cinematic?.lens_suggestion && <span className={styles.tagBadge}>Lens: {s.cinematic.lens_suggestion}</span>}
             </div>
           </div>
         ))}

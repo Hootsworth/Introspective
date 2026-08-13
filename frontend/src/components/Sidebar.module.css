@@ -20,11 +20,10 @@
   padding: 4px 8px 18px;
 }
 
-.slate {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
-  background: var(--accent-cyan);
+.brandIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
   flex-shrink: 0;
 }
 
