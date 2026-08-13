@@ -7,19 +7,19 @@ import { Button, Pill } from "../components/ui";
 import styles from "./Storyboard.module.css";
 
 function parseColor(colorStr) {
-  if (!colorStr) return "#f59e0b";
+  if (!colorStr) return "#e2c275";
   colorStr = colorStr.trim();
   if (colorStr.startsWith("#")) return colorStr;
   if (/^[0-9a-fA-F]{3,6}$/.test(colorStr)) return `#${colorStr}`;
   const knownColors = {
     red: "#ef4444",
-    blue: "#f59e0b",
+    blue: "#e2c275",
     green: "#10b981",
     yellow: "#eab308",
-    amber: "#f59e0b",
-    gold: "#f59e0b",
-    cyan: "#f59e0b",
-    teal: "#f59e0b",
+    amber: "#e2c275",
+    gold: "#e2c275",
+    cyan: "#e2c275",
+    teal: "#e2c275",
     purple: "#a855f7",
     orange: "#f97316",
     black: "#121212",
@@ -29,15 +29,15 @@ function parseColor(colorStr) {
     gray: "#64748b",
     grey: "#64748b",
     white: "#f8fafc",
-    warm: "#f59e0b",
-    cold: "#f59e0b",
+    warm: "#e2c275",
+    cold: "#e2c275",
     neon: "#10b981",
   };
   const lower = colorStr.toLowerCase();
   for (const [key, hex] of Object.entries(knownColors)) {
     if (lower.includes(key)) return hex;
   }
-  return "#f59e0b";
+  return "#e2c275";
 }
 
 function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset, aspectRatio }) {
@@ -108,14 +108,14 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
         <rect width="800" height="450" fill="#000000" />
 
         {/* Crisp Camera Framing Guide */}
-        <rect x="20" y="20" width="760" height="410" fill="none" stroke="rgba(245, 158, 11, 0.25)" strokeWidth="1" />
+        <rect x="20" y="20" width="760" height="410" fill="none" stroke="rgba(226, 194, 117, 0.25)" strokeWidth="1" />
         <line x1="266" y1="20" x2="266" y2="430" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
         <line x1="533" y1="20" x2="533" y2="430" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
         <line x1="20" y1="150" x2="780" y2="150" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
         <line x1="20" y1="300" x2="780" y2="300" stroke="rgba(255,255,255,0.06)" strokeDasharray="4 4" />
 
         {/* Center Crosshair */}
-        <path d="M 390 225 L 410 225 M 400 215 L 400 235" stroke="#f59e0b" strokeWidth="1.5" />
+        <path d="M 390 225 L 410 225 M 400 215 L 400 235" stroke="#e2c275" strokeWidth="1.5" />
 
         <text
           x="40"
@@ -130,7 +130,7 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
         <text
           x="40"
           y="88"
-          fill="#f59e0b"
+          fill="#e2c275"
           fontSize="12"
           fontFamily="Inter, sans-serif"
           fontWeight="600"
@@ -289,7 +289,7 @@ export default function ImageStub({ kind }) {
             style={{
               background: subTab === "grid" ? "var(--surface-1)" : "transparent",
               color: subTab === "grid" ? "var(--accent-gold)" : "var(--text-dim)",
-              border: "1px solid " + (subTab === "grid" ? "rgba(245, 158, 11, 0.3)" : "transparent"),
+              border: "1px solid " + (subTab === "grid" ? "rgba(226, 194, 117, 0.3)" : "transparent"),
               padding: "6px 14px",
               borderRadius: 6,
               fontWeight: subTab === "grid" ? 600 : 500,
@@ -305,7 +305,7 @@ export default function ImageStub({ kind }) {
             style={{
               background: subTab === "deck" ? "var(--surface-1)" : "transparent",
               color: subTab === "deck" ? "var(--accent-gold)" : "var(--text-dim)",
-              border: "1px solid " + (subTab === "deck" ? "rgba(245, 158, 11, 0.3)" : "transparent"),
+              border: "1px solid " + (subTab === "deck" ? "rgba(226, 194, 117, 0.3)" : "transparent"),
               padding: "6px 14px",
               borderRadius: 6,
               fontWeight: subTab === "deck" ? 600 : 500,
@@ -321,7 +321,7 @@ export default function ImageStub({ kind }) {
             style={{
               background: subTab === "video" ? "var(--surface-1)" : "transparent",
               color: subTab === "video" ? "var(--accent-gold)" : "var(--text-dim)",
-              border: "1px solid " + (subTab === "video" ? "rgba(245, 158, 11, 0.3)" : "transparent"),
+              border: "1px solid " + (subTab === "video" ? "rgba(226, 194, 117, 0.3)" : "transparent"),
               padding: "6px 14px",
               borderRadius: 6,
               fontWeight: subTab === "video" ? 600 : 500,
@@ -499,7 +499,7 @@ export default function ImageStub({ kind }) {
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
               {script.scenes.map((s) => {
-                const rawPalette = s.cinematic?.palette || ["#0a0a0a", "#121212", "#f59e0b"];
+                const rawPalette = s.cinematic?.palette || ["#0a0a0a", "#121212", "#e2c275"];
                 return (
                   <div
                     key={s.id}
@@ -596,8 +596,8 @@ export default function ImageStub({ kind }) {
                     fontSize: 12,
                     fontWeight: 700,
                     color: "var(--accent-gold)",
-                    background: "rgba(245, 158, 11, 0.15)",
-                    border: "1px solid rgba(245, 158, 11, 0.3)",
+                    background: "rgba(226, 194, 117, 0.15)",
+                    border: "1px solid rgba(226, 194, 117, 0.3)",
                     padding: "3px 8px",
                     borderRadius: 4,
                   }}
@@ -690,7 +690,7 @@ export default function ImageStub({ kind }) {
                   background: "#000000",
                   borderRadius: 12,
                   overflow: "hidden",
-                  border: "1px solid rgba(245, 158, 11, 0.3)",
+                  border: "1px solid rgba(226, 194, 117, 0.3)",
                   boxShadow: "0 20px 60px rgba(0,0,0,0.8)",
                   position: "relative",
                 }}

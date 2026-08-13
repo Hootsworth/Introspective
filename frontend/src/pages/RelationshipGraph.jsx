@@ -121,7 +121,7 @@ export default function RelationshipGraph() {
                   y1={e.a.y}
                   x2={e.b.x}
                   y2={e.b.y}
-                  stroke={isConnected ? "#f59e0b" : "rgba(245, 158, 11, 0.4)"}
+                  stroke={isConnected ? "#e2c275" : "rgba(226, 194, 117, 0.4)"}
                   strokeOpacity={isConnected ? 1 : 0.45}
                   strokeWidth={isConnected ? Math.min(7, 2 + e.weight * 1.2) : Math.min(4, 1.2 + e.weight * 0.6)}
                 />
@@ -142,16 +142,16 @@ export default function RelationshipGraph() {
                     cx={n.x}
                     cy={n.y}
                     r={n.r + 5}
-                    fill={isActive ? "rgba(245, 158, 11, 0.25)" : "transparent"}
-                    stroke={isActive ? "#f59e0b" : "transparent"}
+                    fill={isActive ? "rgba(226, 194, 117, 0.25)" : "transparent"}
+                    stroke={isActive ? "#e2c275" : "transparent"}
                     strokeWidth="2"
                   />
                   <circle
                     cx={n.x}
                     cy={n.y}
                     r={n.r}
-                    fill={isActive ? "#f59e0b" : "var(--surface-2)"}
-                    stroke="#f59e0b"
+                    fill={isActive ? "#e2c275" : "var(--surface-2)"}
+                    stroke="#e2c275"
                     strokeWidth="2"
                   />
                   <text

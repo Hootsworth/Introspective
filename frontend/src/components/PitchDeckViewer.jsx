@@ -339,7 +339,7 @@ export default function PitchDeckViewer({ project, script, onRefresh }) {
                   {currentSlide.director_notes && (
                     <div
                       style={{
-                        background: "rgba(245, 158, 11, 0.08)",
+                        background: "rgba(226, 194, 117, 0.08)",
                         borderLeft: "3px solid var(--accent-amber)",
                         padding: "10px 14px",
                         borderRadius: 4,
@@ -419,8 +419,8 @@ export default function PitchDeckViewer({ project, script, onRefresh }) {
                 height: 24,
                 borderRadius: 4,
                 border: "1px solid",
-                borderColor: idx === currentSlideIndex ? "rgba(245, 158, 11, 0.4)" : "var(--border-soft)",
-                background: idx === currentSlideIndex ? "rgba(245, 158, 11, 0.15)" : "var(--surface-1)",
+                borderColor: idx === currentSlideIndex ? "rgba(226, 194, 117, 0.4)" : "var(--border-soft)",
+                background: idx === currentSlideIndex ? "rgba(226, 194, 117, 0.15)" : "var(--surface-1)",
                 color: idx === currentSlideIndex ? "var(--accent-cyan)" : "var(--text-dim)",
                 fontSize: 11,
                 fontWeight: 600,

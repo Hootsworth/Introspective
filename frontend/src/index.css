@@ -13,17 +13,17 @@
   --text-dim: #94a3b8;
   --text-faint: #64748b;
 
-  --accent-gold: #f59e0b;
-  --accent-gold-soft: rgba(245, 158, 11, 0.15);
-  --accent-cyan: #f59e0b;
-  --accent-amber: #f59e0b;
-  --accent-amber-soft: rgba(245, 158, 11, 0.15);
-  --accent-teal: #f59e0b;
-  --accent-teal-soft: rgba(245, 158, 11, 0.15);
+  --accent-gold: #e2c275;
+  --accent-gold-soft: rgba(226, 194, 117, 0.15);
+  --accent-cyan: #e2c275;
+  --accent-amber: #e2c275;
+  --accent-amber-soft: rgba(226, 194, 117, 0.15);
+  --accent-teal: #e2c275;
+  --accent-teal-soft: rgba(226, 194, 117, 0.15);
   --accent-red: #ef4444;
 
   --glass-bg: rgba(10, 10, 10, 0.9);
-  --glass-border: rgba(245, 158, 11, 0.15);
+  --glass-border: rgba(226, 194, 117, 0.15);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.6);
   --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.8);
@@ -50,13 +50,13 @@
   --text-dim: #94a3b8;
   --text-faint: #64748b;
 
-  --accent-gold: #f59e0b;
-  --accent-gold-soft: rgba(245, 158, 11, 0.15);
-  --accent-cyan: #f59e0b;
-  --accent-amber: #f59e0b;
-  --accent-amber-soft: rgba(245, 158, 11, 0.15);
-  --accent-teal: #f59e0b;
-  --accent-teal-soft: rgba(245, 158, 11, 0.15);
+  --accent-gold: #e2c275;
+  --accent-gold-soft: rgba(226, 194, 117, 0.15);
+  --accent-cyan: #e2c275;
+  --accent-amber: #e2c275;
+  --accent-amber-soft: rgba(226, 194, 117, 0.15);
+  --accent-teal: #e2c275;
+  --accent-teal-soft: rgba(226, 194, 117, 0.15);
   --accent-red: #ef4444;
 
   color-scheme: dark;

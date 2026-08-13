@@ -53,9 +53,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(226, 194, 117, 0.15);
   color: var(--accent-cyan);
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(226, 194, 117, 0.3);
   padding: 3px 8px;
   border-radius: 4px;
 }
@@ -227,9 +227,9 @@
 }
 
 .modeBtnActive {
-  background: rgba(245, 158, 11, 0.15);
+  background: rgba(226, 194, 117, 0.15);
   color: var(--accent-cyan);
-  border-color: rgba(245, 158, 11, 0.4);
+  border-color: rgba(226, 194, 117, 0.4);
 }
 
 .modalActions {

@@ -148,7 +148,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
         ctx.drawImage(img, -w / 2, -h / 2, w, h);
       } else {
         // Flat Slate Graphic fallback
-        const palette = shot.palette || ["#0a0a0a", "#121212", "#f59e0b"];
+        const palette = shot.palette || ["#0a0a0a", "#121212", "#e2c275"];
         const grad = ctx.createLinearGradient(0, 0, w, h);
         grad.addColorStop(0, palette[0] || "#0a0a0a");
         grad.addColorStop(0.5, palette[1] || "#121212");
@@ -180,7 +180,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
       ctx.lineWidth = 1;
       ctx.strokeRect(24, 24, 460, 80);
 
-      ctx.fillStyle = "#f59e0b";
+      ctx.fillStyle = "#e2c275";
       ctx.font = 'bold 18px "Bebas Neue", sans-serif';
       ctx.fillText(`SHOT ${String(shot.scene_number).padStart(2, "0")} · ${shot.slugline.toUpperCase()}`, 40, 54);
 
@@ -192,7 +192,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
       if (shot.subtitle) {
         ctx.fillStyle = "rgba(10, 10, 10, 0.9)";
         ctx.fillRect(60, h - 90, w - 120, 54);
-        ctx.strokeStyle = "rgba(245, 158, 11, 0.25)";
+        ctx.strokeStyle = "rgba(226, 194, 117, 0.25)";
         ctx.strokeRect(60, h - 90, w - 120, 54);
 
         ctx.fillStyle = "#ffffff";
@@ -381,9 +381,9 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
                 key={spd}
                 onClick={() => setPlaybackSpeed(spd)}
                 style={{
-                  background: playbackSpeed === spd ? "rgba(245, 158, 11, 0.15)" : "transparent",
+                  background: playbackSpeed === spd ? "rgba(226, 194, 117, 0.15)" : "transparent",
                   color: playbackSpeed === spd ? "var(--accent-cyan)" : "var(--text-dim)",
-                  border: "1px solid " + (playbackSpeed === spd ? "rgba(245, 158, 11, 0.4)" : "var(--border-soft)"),
+                  border: "1px solid " + (playbackSpeed === spd ? "rgba(226, 194, 117, 0.4)" : "var(--border-soft)"),
                   borderRadius: 4,
                   padding: "2px 8px",
                   fontSize: 11,
@@ -407,7 +407,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
                 drawFrame(s.start_time_sec);
               }}
               style={{
-                background: idx === currentShotIndex ? "rgba(245, 158, 11, 0.15)" : "var(--surface-2)",
+                background: idx === currentShotIndex ? "rgba(226, 194, 117, 0.15)" : "var(--surface-2)",
                 color: idx === currentShotIndex ? "var(--accent-cyan)" : "var(--text-dim)",
                 border: "1px solid",
                 borderColor: idx === currentShotIndex ? "var(--accent-cyan)" : "var(--border-soft)",
