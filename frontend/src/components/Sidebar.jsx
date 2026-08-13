@@ -37,8 +37,11 @@ export default function Sidebar({ projects }) {
   const navigate = useNavigate();
   const location = useLocation();
   const match = location.pathname.match(/\/projects\/([^\/]+)/);
-  const projectId = match ? match[1] : null;
-  const activeProject = projects?.find((p) => p.id === projectId);
+  const currentProjectId = match ? match[1] : null;
+
+  // Use active project or fallback to the most recent project in list
+  const activeProject = projects?.find((p) => p.id === currentProjectId) || (projects && projects[0]);
+  const activeId = activeProject?.id;
 
   const preProdNav = [
     { to: "script", icon: "script", label: "Script Viewer" },
@@ -57,19 +60,19 @@ export default function Sidebar({ projects }) {
 
   return (
     <aside className={styles.sidebar}>
-      <div className={styles.brand}>
+      <div className={styles.brand} onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
         <img src="/logo.png" className={styles.brandIcon} alt="Introspective Logo" />
         <span className={styles.brandText}>Introspective</span>
       </div>
 
-      {activeProject && (
+      {activeId && (
         <>
           <nav className={styles.section}>
             <div className={styles.sectionLabel}>PRE-PRODUCTION</div>
             {preProdNav.map((item) => (
               <NavLink
                 key={item.to}
-                to={`/projects/${projectId}/${item.to}`}
+                to={`/projects/${activeId}/${item.to}`}
                 className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}
               >
                 <Icon name={item.icon} /> {item.label}
@@ -82,7 +85,7 @@ export default function Sidebar({ projects }) {
             {visualNav.map((item) => (
               <NavLink
                 key={item.to}
-                to={`/projects/${projectId}/${item.to}`}
+                to={`/projects/${activeId}/${item.to}`}
                 className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}
               >
                 <Icon name={item.icon} /> {item.label}
@@ -102,7 +105,7 @@ export default function Sidebar({ projects }) {
       <div className={styles.spacer} />
 
       <button className={styles.leaveBtn} onClick={() => navigate("/")}>
-        <IconLeave /> Leave Project
+        <IconLeave /> Dashboard
       </button>
     </aside>
   );
