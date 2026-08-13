@@ -4,6 +4,16 @@ import { api } from "../api/client";
 import { Button } from "../components/ui";
 import styles from "./ScriptViewer.module.css";
 
+function IconUploadPlus() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="17 8 12 3 7 8" />
+      <line x1="12" y1="3" x2="12" y2="15" />
+    </svg>
+  );
+}
+
 export default function ScriptViewer() {
   const { project, scripts, script, activeScriptId, setActiveScriptId, refreshScripts, refreshScript, refreshCharacters } =
     useOutletContext();
@@ -61,7 +71,7 @@ export default function ScriptViewer() {
         setAnalysisError(errors.join("\n"));
       } else {
         if (newCount > 0) {
-          setAnalysisSuccess(`Successfully analyzed ${newCount} scene(s)! Click on Scene Explorer or Shot List to view breakdown.`);
+          setAnalysisSuccess(`Successfully analyzed ${newCount} scene(s)! Click on Scene Explorer or Storyboard to view breakdown.`);
         } else if (cachedCount > 0) {
           setAnalysisSuccess(`All ${cachedCount} scenes are already analyzed. Click "Force Re-analyze" to re-run AI analysis.`);
         }
@@ -78,15 +88,13 @@ export default function ScriptViewer() {
       <div className={styles.wrap}>
         <div className={styles.uploadContainer}>
           <div className={styles.uploadCard}>
-            <div className={styles.uploadTitle}>Upload a screenplay</div>
+            <div className={styles.uploadTitle}>Upload Screenplay</div>
             <p className={styles.uploadBody}>
-              Plain-text (.txt) screenplay in standard format — INT./EXT. sluglines, ALL-CAPS character
-              cues, action lines. Script2Vision parses scenes, characters, and dialogue locally; nothing
-              leaves your machine at this step.
+              Upload a plain-text (.txt or .fountain) screenplay. Introspective automatically parses INT./EXT. sluglines, scene numbers, dialogue, and characters locally.
             </p>
             <input ref={fileRef} type="file" accept=".txt,.fountain" onChange={handleUpload} style={{ display: "none" }} id="upload" />
             <Button primary onClick={() => fileRef.current?.click()} disabled={uploading}>
-              {uploading ? "Parsing…" : "Choose File"}
+              {uploading ? "Parsing Screenplay…" : "Choose File"}
             </Button>
           </div>
         </div>
@@ -104,56 +112,39 @@ export default function ScriptViewer() {
             ))}
           </select>
         )}
-        <Button onClick={() => fileRef.current?.click()} disabled={uploading}>
-          {uploading ? "Parsing…" : "Upload Another Script"}
-        </Button>
+
+        <button
+          className={styles.iconBtn}
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          title="Upload another script"
+        >
+          <IconUploadPlus />
+          <span style={{ fontSize: 12.5, fontWeight: 500 }}>Upload Script</span>
+        </button>
         <input ref={fileRef} type="file" accept=".txt,.fountain" onChange={handleUpload} style={{ display: "none" }} />
+
         <div style={{ flex: 1 }} />
-        <Button onClick={() => handleAnalyzeAll(true)} disabled={analyzing || !script?.scenes.length}>
+
+        <Button ghost onClick={() => handleAnalyzeAll(true)} disabled={analyzing || !script?.scenes.length} style={{ fontSize: 12 }}>
           Force Re-analyze
         </Button>
-        <Button primary onClick={() => handleAnalyzeAll(false)} disabled={analyzing || !script?.scenes.length}>
+
+        <Button primary onClick={() => handleAnalyzeAll(false)} disabled={analyzing || !script?.scenes.length} style={{ fontSize: 12 }}>
           {analyzing ? `Analyzing ${progress.done}/${progress.total}…` : "Analyze All Scenes"}
         </Button>
       </div>
 
       {analysisSuccess && (
-        <div
-          style={{
-            background: "rgba(16, 185, 129, 0.1)",
-            border: "1px solid rgba(16, 185, 129, 0.25)",
-            color: "#10b981",
-            padding: "12px 16px",
-            borderRadius: "8px",
-            marginBottom: "16px",
-            fontSize: "13.5px",
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-          }}
-        >
+        <div className={styles.successBanner}>
           <span style={{ flex: 1 }}>{analysisSuccess}</span>
-          <Button primary onClick={() => navigate(`/projects/${project.id}/scenes`)}>
+          <Button primary onClick={() => navigate(`/projects/${project.id}/scenes`)} style={{ fontSize: 12 }}>
             Open Scene Explorer
           </Button>
         </div>
       )}
 
-      {analysisError && (
-        <div
-          style={{
-            background: "rgba(239, 68, 68, 0.1)",
-            border: "1px solid rgba(239, 68, 68, 0.25)",
-            color: "#ef4444",
-            padding: "12px 16px",
-            borderRadius: "8px",
-            marginBottom: "16px",
-            fontSize: "13.5px",
-          }}
-        >
-          {analysisError}
-        </div>
-      )}
+      {analysisError && <div className={styles.errorBanner}>{analysisError}</div>}
 
       {analyzing && (
         <div className={styles.progressBar}>
@@ -163,56 +154,42 @@ export default function ScriptViewer() {
 
       {script && (
         <div className={styles.page}>
-          <div style={{ textAlign: "center", fontWeight: 700, marginBottom: 24, fontSize: 15, letterSpacing: "0.04em" }}>
+          <div className={styles.scriptTitleHeader}>
             {script.parsed_title.toUpperCase()}
           </div>
+          <div className={styles.scriptDivider} />
+
           {script.scenes.map((scene) => (
-            <div key={scene.id} style={{ marginBottom: 24 }}>
-              <div className={styles.slugline}>
-                <span className={styles.sceneNum}>{String(scene.scene_number).padStart(2, "0")}</span>
-                <span style={{ flex: 1 }}>{scene.slugline}</span>
+            <div key={scene.id} className={styles.sceneBlock}>
+              <div className={styles.sluglineRow}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1, minWidth: 0 }}>
+                  <span className={styles.sceneNum}>SHOT {String(scene.scene_number).padStart(2, "0")}</span>
+                  <span className={styles.sluglineText}>{scene.slugline}</span>
+                </div>
 
                 {scene.analyzed && (
                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
                     {scene.dominant_emotion && (
-                      <span
-                        style={{
-                          fontSize: 11,
-                          fontWeight: 600,
-                          padding: "2px 8px",
-                          borderRadius: 12,
-                          background: "var(--accent-amber-soft)",
-                          color: "var(--accent-amber)",
-                        }}
-                      >
+                      <span className={styles.emotionBadge}>
                         {scene.dominant_emotion}
                       </span>
                     )}
                     {scene.cinematic?.camera && (
-                      <span
-                        style={{
-                          fontSize: 10.5,
-                          fontWeight: 600,
-                          padding: "2px 7px",
-                          borderRadius: 4,
-                          background: "var(--surface-2)",
-                          border: "1px solid var(--border)",
-                          color: "var(--text-dim)",
-                          fontFamily: "var(--font-body)",
-                        }}
-                      >
+                      <span className={styles.specTag}>
                         {scene.cinematic.camera}
                       </span>
                     )}
                   </div>
                 )}
               </div>
-              {scene.action_text && <p className={styles.action}>{scene.action_text}</p>}
+
+              {scene.action_text && <p className={styles.actionText}>{scene.action_text}</p>}
+
               {scene.dialogue.map((d, i) => (
                 <div className={styles.dialogueBlock} key={i}>
-                  <div className={styles.character}>{d.character}</div>
+                  <div className={styles.characterCue}>{d.character}</div>
                   {d.parenthetical && <div className={styles.parenthetical}>({d.parenthetical})</div>}
-                  <div className={styles.line}>{d.line}</div>
+                  <div className={styles.dialogueLine}>{d.line}</div>
                 </div>
               ))}
             </div>
