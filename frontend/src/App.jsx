@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import { useTheme } from "./hooks/useTheme";
 import { api } from "./api/client";
@@ -22,6 +22,9 @@ export default function App() {
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState(null);
 
+  const location = useLocation();
+  const isDashboard = location.pathname === "/";
+
   const refreshProjects = useCallback(async () => {
     try {
       setLoadError(null);
@@ -39,7 +42,7 @@ export default function App() {
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      <Sidebar projects={projects} />
+      {!isDashboard && <Sidebar projects={projects} />}
       <main style={{ flex: 1, minWidth: 0 }}>
         {loaded && (
           <Routes>

@@ -62,9 +62,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
+  padding: 0 14px;
+  height: 42px;
   background: var(--surface-1);
   border-bottom: 1px solid var(--border-soft);
+  box-sizing: border-box;
 }
 
 .shotBadge {
@@ -76,6 +78,7 @@
   padding: 2px 6px;
   border-radius: 4px;
   border: 1px solid rgba(56, 189, 248, 0.2);
+  flex-shrink: 0;
 }
 
 .slugline {
@@ -85,6 +88,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+  min-width: 0;
 }
 
 .viewport {

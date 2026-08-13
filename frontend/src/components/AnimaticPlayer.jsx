@@ -381,9 +381,9 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
                 key={spd}
                 onClick={() => setPlaybackSpeed(spd)}
                 style={{
-                  background: playbackSpeed === spd ? "var(--accent-cyan)" : "transparent",
-                  color: playbackSpeed === spd ? "#090d16" : "var(--text-dim)",
-                  border: "1px solid var(--border-soft)",
+                  background: playbackSpeed === spd ? "rgba(56, 189, 248, 0.15)" : "transparent",
+                  color: playbackSpeed === spd ? "var(--accent-cyan)" : "var(--text-dim)",
+                  border: "1px solid " + (playbackSpeed === spd ? "rgba(56, 189, 248, 0.4)" : "var(--border-soft)"),
                   borderRadius: 4,
                   padding: "2px 8px",
                   fontSize: 11,

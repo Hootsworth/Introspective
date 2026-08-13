@@ -419,11 +419,11 @@ export default function PitchDeckViewer({ project, script, onRefresh }) {
                 height: 24,
                 borderRadius: 4,
                 border: "1px solid",
-                borderColor: idx === currentSlideIndex ? "var(--accent-cyan)" : "var(--border-soft)",
-                background: idx === currentSlideIndex ? "var(--accent-cyan)" : "var(--surface-1)",
-                color: idx === currentSlideIndex ? "#090d16" : "var(--text-dim)",
+                borderColor: idx === currentSlideIndex ? "rgba(56, 189, 248, 0.4)" : "var(--border-soft)",
+                background: idx === currentSlideIndex ? "rgba(56, 189, 248, 0.15)" : "var(--surface-1)",
+                color: idx === currentSlideIndex ? "var(--accent-cyan)" : "var(--text-dim)",
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: "pointer",
               }}
             >

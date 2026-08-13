@@ -159,6 +159,7 @@ export default function ImageStub({ kind }) {
   const [generatingId, setGeneratingId] = useState(null);
   const [generatedFrames, setGeneratedFrames] = useState({});
   const [customPrompts, setCustomPrompts] = useState({});
+  const [expandedPrompts, setExpandedPrompts] = useState({});
   const [renderError, setRenderError] = useState(null);
   const [showTestSuite, setShowTestSuite] = useState(false);
   const [comfyStatus, setComfyStatus] = useState(null);
@@ -320,10 +321,10 @@ export default function ImageStub({ kind }) {
         <div
           style={{
             display: "flex",
-            gap: 8,
-            marginBottom: 16,
+            gap: 4,
+            marginBottom: 20,
             background: "var(--surface-2)",
-            padding: "4px 8px",
+            padding: 4,
             borderRadius: 8,
             border: "1px solid var(--border-soft)",
             width: "fit-content",
@@ -332,15 +333,15 @@ export default function ImageStub({ kind }) {
           <button
             onClick={() => setSubTab("grid")}
             style={{
-              background: subTab === "grid" ? "var(--accent-cyan)" : "transparent",
-              color: subTab === "grid" ? "#090d16" : "var(--text)",
-              border: "none",
+              background: subTab === "grid" ? "var(--surface-1)" : "transparent",
+              color: subTab === "grid" ? "var(--accent-cyan)" : "var(--text-dim)",
+              border: "1px solid " + (subTab === "grid" ? "rgba(56, 189, 248, 0.3)" : "transparent"),
               padding: "6px 14px",
               borderRadius: 6,
-              fontWeight: 600,
-              fontSize: 13,
+              fontWeight: subTab === "grid" ? 600 : 500,
+              fontSize: 12.5,
               cursor: "pointer",
-              transition: "all 0.2s",
+              transition: "all 0.15s ease",
             }}
           >
             Storyboard Grid
@@ -348,15 +349,15 @@ export default function ImageStub({ kind }) {
           <button
             onClick={() => setSubTab("deck")}
             style={{
-              background: subTab === "deck" ? "var(--accent-cyan)" : "transparent",
-              color: subTab === "deck" ? "#090d16" : "var(--text)",
-              border: "none",
+              background: subTab === "deck" ? "var(--surface-1)" : "transparent",
+              color: subTab === "deck" ? "var(--accent-cyan)" : "var(--text-dim)",
+              border: "1px solid " + (subTab === "deck" ? "rgba(56, 189, 248, 0.3)" : "transparent"),
               padding: "6px 14px",
               borderRadius: 6,
-              fontWeight: 600,
-              fontSize: 13,
+              fontWeight: subTab === "deck" ? 600 : 500,
+              fontSize: 12.5,
               cursor: "pointer",
-              transition: "all 0.2s",
+              transition: "all 0.15s ease",
             }}
           >
             Slide Pitch Deck
@@ -364,15 +365,15 @@ export default function ImageStub({ kind }) {
           <button
             onClick={() => setSubTab("video")}
             style={{
-              background: subTab === "video" ? "var(--accent-cyan)" : "transparent",
-              color: subTab === "video" ? "#090d16" : "var(--text)",
-              border: "none",
+              background: subTab === "video" ? "var(--surface-1)" : "transparent",
+              color: subTab === "video" ? "var(--accent-cyan)" : "var(--text-dim)",
+              border: "1px solid " + (subTab === "video" ? "rgba(56, 189, 248, 0.3)" : "transparent"),
               padding: "6px 14px",
               borderRadius: 6,
-              fontWeight: 600,
-              fontSize: 13,
+              fontWeight: subTab === "video" ? 600 : 500,
+              fontSize: 12.5,
               cursor: "pointer",
-              transition: "all 0.2s",
+              transition: "all 0.15s ease",
             }}
           >
             Storyboard Video Reel (Animatic)
@@ -427,10 +428,15 @@ export default function ImageStub({ kind }) {
             return (
               <div key={scene.id} className={styles.frameCard}>
                 <div className={styles.header}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0, flex: 1 }}>
                     <span className={styles.shotBadge}>SHOT {String(scene.scene_number).padStart(2, "0")}</span>
                     <span className={styles.slugline}>{(scene.slugline.split("-")[0] || scene.slugline).trim()}</span>
                   </div>
+                  {scene.cinematic?.camera && (
+                    <span className={styles.specTag} style={{ marginLeft: 8, flexShrink: 0 }}>
+                      {scene.cinematic.camera}
+                    </span>
+                  )}
                 </div>
 
                 <div className={`${styles.viewport} ${viewportClass}`}>
@@ -444,46 +450,53 @@ export default function ImageStub({ kind }) {
                 </div>
 
                 <div className={styles.frameBody}>
-                  <div className={styles.tagsRow}>
-                    {scene.cinematic?.camera && <span className={styles.specTag}>{scene.cinematic.camera}</span>}
-                    {scene.cinematic?.lens_suggestion && (
-                      <span className={styles.specTag}>{scene.cinematic.lens_suggestion}</span>
-                    )}
-                    {scene.cinematic?.movement && <span className={styles.specTag}>{scene.cinematic.movement}</span>}
-                    {scene.dominant_emotion && <Pill tone="amber">{scene.dominant_emotion}</Pill>}
-                  </div>
-
-                  <div className={styles.promptBox}>
-                    <div className={styles.promptLabel}>AI Prompt Synthesis</div>
-                    <textarea
-                      style={{
-                        width: "100%",
-                        background: "transparent",
-                        border: "none",
-                        color: "inherit",
-                        fontSize: "12px",
-                        fontFamily: "inherit",
-                        resize: "vertical",
-                        minHeight: "44px",
-                        outline: "none",
-                      }}
-                      value={prompt}
-                      onChange={(e) =>
-                        setCustomPrompts((prev) => ({
-                          ...prev,
-                          [scene.id]: e.target.value,
-                        }))
-                      }
-                    />
-                  </div>
+                  {expandedPrompts[scene.id] && (
+                    <div className={styles.promptBox} style={{ marginBottom: 8 }}>
+                      <div className={styles.promptLabel}>AI Prompt Synthesis</div>
+                      <textarea
+                        style={{
+                          width: "100%",
+                          background: "transparent",
+                          border: "none",
+                          color: "inherit",
+                          fontSize: "12px",
+                          fontFamily: "inherit",
+                          resize: "vertical",
+                          minHeight: "44px",
+                          outline: "none",
+                        }}
+                        value={prompt}
+                        onChange={(e) =>
+                          setCustomPrompts((prev) => ({
+                            ...prev,
+                            [scene.id]: e.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                  )}
 
                   <div className={styles.actions}>
                     <Button
                       primary
                       disabled={isGenerating}
                       onClick={() => handleGenerateFrame(scene)}
+                      style={{ fontSize: 12, padding: "5px 12px" }}
                     >
-                      {isGenerating ? "Rendering via ComfyUI…" : currentFrameUrl ? "Re-render Frame" : "Render Frame with ComfyUI"}
+                      {isGenerating ? "Rendering..." : currentFrameUrl ? "Re-render Frame" : "Render Frame"}
+                    </Button>
+
+                    <Button
+                      ghost
+                      onClick={() =>
+                        setExpandedPrompts((prev) => ({
+                          ...prev,
+                          [scene.id]: !prev[scene.id],
+                        }))
+                      }
+                      style={{ fontSize: 12, padding: "5px 10px" }}
+                    >
+                      {expandedPrompts[scene.id] ? "Hide Prompt" : "Edit Prompt"}
                     </Button>
                   </div>
                 </div>

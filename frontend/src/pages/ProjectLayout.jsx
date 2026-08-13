@@ -119,11 +119,13 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
       <div
         style={{
           display: "flex",
-          gap: 6,
-          padding: "0 32px 14px",
+          gap: 4,
+          margin: "0 32px 24px",
+          padding: 4,
           overflowX: "auto",
-          borderBottom: "1px solid var(--border-soft)",
-          marginBottom: 24,
+          background: "var(--surface-2)",
+          border: "1px solid var(--border-soft)",
+          borderRadius: 8,
         }}
       >
         {NAV_ITEMS.map((item) => (
@@ -136,9 +138,9 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
               fontWeight: isActive ? 600 : 500,
               borderRadius: 6,
               textDecoration: "none",
-              background: isActive ? "var(--accent-cyan)" : "transparent",
-              color: isActive ? "#090d16" : "var(--text-dim)",
-              border: "1px solid " + (isActive ? "var(--accent-cyan)" : "transparent"),
+              background: isActive ? "var(--surface-1)" : "transparent",
+              color: isActive ? "var(--accent-cyan)" : "var(--text-dim)",
+              border: "1px solid " + (isActive ? "rgba(56, 189, 248, 0.3)" : "transparent"),
               whiteSpace: "nowrap",
               transition: "all 0.15s ease",
             })}

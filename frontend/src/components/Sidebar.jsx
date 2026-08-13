@@ -1,4 +1,4 @@
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 
 const ICONS = {
@@ -17,26 +17,31 @@ const ICONS = {
 
 function Icon({ name }) {
   return (
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
-         strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+         strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
       <path d={ICONS[name]} />
     </svg>
   );
 }
 
 export default function Sidebar({ projects }) {
-  const { projectId } = useParams();
+  const location = useLocation();
+  const match = location.pathname.match(/\/projects\/([^\/]+)/);
+  const projectId = match ? match[1] : null;
   const activeProject = projects?.find((p) => p.id === projectId);
 
-  const projectNav = [
+  const preProdNav = [
     { to: "script", icon: "script", label: "Script Viewer" },
     { to: "scenes", icon: "scenes", label: "Scene Explorer" },
-    { to: "characters", icon: "characters", label: "Character Explorer" },
-    { to: "graph", icon: "graph", label: "Relationship Graph" },
-    { to: "storyboard", icon: "storyboard", label: "Storyboard" },
-    { to: "moodboard", icon: "moodboard", label: "Mood Board" },
     { to: "shotlist", icon: "shotlist", label: "Shot List" },
     { to: "notes", icon: "notes", label: "Director Notes" },
+  ];
+
+  const visualNav = [
+    { to: "storyboard", icon: "storyboard", label: "Storyboard Studio" },
+    { to: "moodboard", icon: "moodboard", label: "Mood Board" },
+    { to: "characters", icon: "characters", label: "Characters" },
+    { to: "graph", icon: "graph", label: "Relationship Graph" },
     { to: "exports", icon: "exports", label: "Exports" },
   ];
 
@@ -48,34 +53,46 @@ export default function Sidebar({ projects }) {
       </div>
 
       <nav className={styles.section}>
-        <div className={styles.sectionLabel}>Library</div>
+        <div className={styles.sectionLabel}>PLATFORM</div>
         <NavLink to="/" end className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
           <Icon name="dashboard" /> Dashboard
         </NavLink>
-      </nav>
-
-      {activeProject && (
-        <nav className={styles.section}>
-          <div className={styles.sectionLabel}>{activeProject.title}</div>
-          {projectNav.map((item) => (
-            <NavLink
-              key={item.to}
-              to={`/projects/${projectId}/${item.to}`}
-              className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}
-            >
-              <Icon name={item.icon} /> {item.label}
-            </NavLink>
-          ))}
-        </nav>
-      )}
-
-      <div className={styles.spacer} />
-
-      <nav className={styles.section}>
         <NavLink to="/settings" className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
           <Icon name="settings" /> Settings
         </NavLink>
       </nav>
+
+      {activeProject && (
+        <>
+          <nav className={styles.section}>
+            <div className={styles.sectionLabel}>PRE-PRODUCTION · {activeProject.title.toUpperCase()}</div>
+            {preProdNav.map((item) => (
+              <NavLink
+                key={item.to}
+                to={`/projects/${projectId}/${item.to}`}
+                className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}
+              >
+                <Icon name={item.icon} /> {item.label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <nav className={styles.section}>
+            <div className={styles.sectionLabel}>VISUAL STUDIO</div>
+            {visualNav.map((item) => (
+              <NavLink
+                key={item.to}
+                to={`/projects/${projectId}/${item.to}`}
+                className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}
+              >
+                <Icon name={item.icon} /> {item.label}
+              </NavLink>
+            ))}
+          </nav>
+        </>
+      )}
+
+      <div className={styles.spacer} />
     </aside>
   );
 }
