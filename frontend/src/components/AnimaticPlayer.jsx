@@ -112,7 +112,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
       const shot = shots[activeIndex];
 
       if (!shot) {
-        ctx.fillStyle = "#050811";
+        ctx.fillStyle = "#000000";
         ctx.fillRect(0, 0, w, h);
         return;
       }
@@ -121,7 +121,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
       const shotProgress = Math.min(1.0, Math.max(0.0, (time - shot.start_time_sec) / (shot.duration_sec || 1)));
 
       ctx.save();
-      ctx.fillStyle = "#050811";
+      ctx.fillStyle = "#000000";
       ctx.fillRect(0, 0, w, h);
 
       // Check if image exists in cache
@@ -148,11 +148,11 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
         ctx.drawImage(img, -w / 2, -h / 2, w, h);
       } else {
         // Flat Slate Graphic fallback
-        const palette = shot.palette || ["#0f172a", "#1e293b", "#f59e0b"];
+        const palette = shot.palette || ["#0a0a0a", "#121212", "#f59e0b"];
         const grad = ctx.createLinearGradient(0, 0, w, h);
-        grad.addColorStop(0, palette[0] || "#0f172a");
-        grad.addColorStop(0.5, palette[1] || "#1e293b");
-        grad.addColorStop(1, "#050811");
+        grad.addColorStop(0, palette[0] || "#0a0a0a");
+        grad.addColorStop(0.5, palette[1] || "#121212");
+        grad.addColorStop(1, "#000000");
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, w, h);
 
@@ -174,7 +174,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
       ctx.restore();
 
       // Slate & Telemetry HUD Overlay
-      ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
+      ctx.fillStyle = "rgba(10, 10, 10, 0.85)";
       ctx.fillRect(24, 24, 460, 80);
       ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
       ctx.lineWidth = 1;
@@ -190,7 +190,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
 
       // Subtitle / Dialogue Bar
       if (shot.subtitle) {
-        ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+        ctx.fillStyle = "rgba(10, 10, 10, 0.9)";
         ctx.fillRect(60, h - 90, w - 120, 54);
         ctx.strokeStyle = "rgba(245, 158, 11, 0.25)";
         ctx.strokeRect(60, h - 90, w - 120, 54);
@@ -309,7 +309,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
       <div
         style={{
           position: "relative",
-          background: "#050811",
+          background: "#000000",
           borderRadius: 10,
           overflow: "hidden",
           border: "1px solid var(--border-soft)",

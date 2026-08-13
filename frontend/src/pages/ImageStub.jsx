@@ -22,10 +22,10 @@ function parseColor(colorStr) {
     teal: "#f59e0b",
     purple: "#a855f7",
     orange: "#f97316",
-    black: "#1e293b",
-    dark: "#0f172a",
-    shadow: "#334155",
-    slate: "#475569",
+    black: "#121212",
+    dark: "#0a0a0a",
+    shadow: "#262626",
+    slate: "#333333",
     gray: "#64748b",
     grey: "#64748b",
     white: "#f8fafc",
@@ -81,7 +81,7 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
             fontSize: 10,
             fontFamily: "var(--font-mono)",
             color: "rgba(255, 255, 255, 0.9)",
-            background: "rgba(9, 13, 22, 0.85)",
+            background: "rgba(0, 0, 0, 0.85)",
             backdropFilter: "blur(6px)",
             padding: "4px 10px",
             borderRadius: 4,
@@ -399,8 +399,19 @@ export default function ImageStub({ kind }) {
                     <span className={styles.slugline}>{(scene.slugline.split("-")[0] || scene.slugline).trim()}</span>
                   </div>
                   {scene.cinematic?.camera && (
-                    <span className={styles.specTag} style={{ marginLeft: 8, flexShrink: 0 }}>
-                      {scene.cinematic.camera}
+                    <span
+                      className={styles.specTag}
+                      style={{
+                        marginLeft: 8,
+                        flexShrink: 0,
+                        maxWidth: 130,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                      title={scene.cinematic.camera}
+                    >
+                      {scene.cinematic.camera.split(",")[0].trim()}
                     </span>
                   )}
                 </div>
@@ -488,7 +499,7 @@ export default function ImageStub({ kind }) {
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
               {script.scenes.map((s) => {
-                const rawPalette = s.cinematic?.palette || ["#0f172a", "#1e293b", "#f59e0b"];
+                const rawPalette = s.cinematic?.palette || ["#0a0a0a", "#121212", "#f59e0b"];
                 return (
                   <div
                     key={s.id}

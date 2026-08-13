@@ -94,7 +94,7 @@
 
 .viewport {
   width: 100%;
-  background: #050811;
+  background: #000000;
   position: relative;
   display: flex;
   align-items: center;
@@ -138,6 +138,11 @@
   border: 1px solid var(--border-soft);
   color: var(--text-dim);
   font-family: var(--font-mono);
+  white-space: nowrap;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
 }
 
 .promptBox {
