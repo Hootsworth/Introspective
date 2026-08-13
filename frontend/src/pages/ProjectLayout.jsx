@@ -1,20 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
-import { Outlet, useParams, useNavigate } from "react-router-dom";
+import { Outlet, useParams, useNavigate, NavLink } from "react-router-dom";
 import { api } from "../api/client";
 import TopBar from "../components/TopBar";
 
-import { NavLink } from "react-router-dom";
-
 const NAV_ITEMS = [
-  { path: "script", label: "📄 Script Viewer" },
-  { path: "scenes", label: "🎬 Scene Explorer" },
-  { path: "storyboard", label: "🖼️ Storyboard Studio" },
-  { path: "moodboard", label: "🎨 Mood Board" },
-  { path: "shotlist", label: "📋 Shot List" },
-  { path: "characters", label: "👤 Characters" },
-  { path: "graph", label: "🕸️ Graph" },
-  { path: "notes", label: "📝 Director Notes" },
-  { path: "exports", label: "📦 Exports" },
+  { path: "script", label: "Script Viewer" },
+  { path: "scenes", label: "Scene Explorer" },
+  { path: "storyboard", label: "Storyboard Studio" },
+  { path: "moodboard", label: "Mood Board" },
+  { path: "shotlist", label: "Shot List" },
+  { path: "characters", label: "Characters" },
+  { path: "graph", label: "Relationship Graph" },
+  { path: "notes", label: "Director Notes" },
+  { path: "exports", label: "Exports" },
 ];
 
 export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
@@ -85,13 +83,14 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
   if (error) {
     return (
       <div style={{ padding: 32, maxWidth: 600 }}>
-        <div style={{ color: "#ef4444", marginBottom: 16, fontSize: 14 }}>⚠️ {error}</div>
+        <div style={{ color: "#ef4444", marginBottom: 16, fontSize: 14 }}>{error}</div>
         <button
           onClick={() => navigate("/")}
           style={{
             padding: "8px 16px",
-            background: "var(--accent-amber)",
-            color: "#fff",
+            background: "var(--accent-cyan)",
+            color: "#000",
+            fontWeight: 600,
             border: "none",
             borderRadius: "6px",
             cursor: "pointer",
@@ -120,7 +119,7 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
       <div
         style={{
           display: "flex",
-          gap: 8,
+          gap: 6,
           padding: "0 32px 14px",
           overflowX: "auto",
           borderBottom: "1px solid var(--border-soft)",
@@ -133,13 +132,13 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
             to={`/projects/${projectId}/${item.path}`}
             style={({ isActive }) => ({
               padding: "6px 14px",
-              fontSize: 13,
-              fontWeight: 600,
-              borderRadius: 20,
+              fontSize: 12.5,
+              fontWeight: isActive ? 600 : 500,
+              borderRadius: 6,
               textDecoration: "none",
-              background: isActive ? "var(--accent-amber)" : "var(--surface-2)",
-              color: isActive ? "#ffffff" : "var(--text-dim)",
-              border: "1px solid " + (isActive ? "var(--accent-amber)" : "var(--border)"),
+              background: isActive ? "var(--accent-cyan)" : "transparent",
+              color: isActive ? "#090d16" : "var(--text-dim)",
+              border: "1px solid " + (isActive ? "var(--accent-cyan)" : "transparent"),
               whiteSpace: "nowrap",
               transition: "all 0.15s ease",
             })}
