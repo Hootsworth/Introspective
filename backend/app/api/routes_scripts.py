@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
-from app.db import Character, Project, Scene, Script, get_db
+from app.db import Character, Project, Scene, Script, SessionLocal, get_db
 from app.models.schemas import (AnalyzeRequest, ScriptDetailOut, ScriptOut,
                                  SceneOut)
 from app.services.ai.orchestrator import AIOrchestrator
@@ -89,9 +89,11 @@ async def upload_script(project_id: str, file: UploadFile = File(...), db: Sessi
         if key in existing:
             c = existing[key]
             c.dialogue_count += ec.dialogue_count
-            c.scene_count = len(set(c.scene_numbers) | ec.scene_numbers)
-            c.scene_numbers = sorted(set(c.scene_numbers) | ec.scene_numbers)
-            c.aliases = sorted(set(c.aliases) | ec.aliases)
+            existing_sn = set(c.scene_numbers or [])
+            existing_al = set(c.aliases or [])
+            c.scene_count = len(existing_sn | ec.scene_numbers)
+            c.scene_numbers = sorted(existing_sn | ec.scene_numbers)
+            c.aliases = sorted(existing_al | ec.aliases)
         else:
             c = Character(
                 project_id=project.id, name=ec.canonical_name,
@@ -194,30 +196,33 @@ async def analyze_all_scenes(script_id: str, payload: AnalyzeRequest, db: Sessio
     scene_ids = [s.id for s in script.scenes]
 
     async def stream():
-        for sid in scene_ids:
-            scene = db.get(Scene, sid)
-            if scene.analyzed and not payload.force:
-                yield json.dumps({"scene_number": scene.scene_number, "status": "cached"}) + "\n"
-                continue
-            try:
-                result = await analyze_scene(db, scene, project.style_prompt, mode, orchestrator)
-                scene.dominant_emotion = result["dominant_emotion"]
-                scene.emotional_intensity = result["emotional_intensity"]
-                scene.tension_score = result["tension_score"]
-                scene.pacing_score = result["pacing_score"]
-                scene.themes = result["themes"]
-                scene.genre_tags = result["genre_tags"]
-                scene.cinematic_json = result["cinematic"]
-                scene.director_notes = result["director_notes"]
-                scene.analyzed = 1
-                db.commit()
-                yield json.dumps({
-                    "scene_number": scene.scene_number, "status": "done",
-                    "dominant_emotion": scene.dominant_emotion,
-                    "provider": result["_meta"]["provider"],
-                }) + "\n"
-            except Exception as e:
-                yield json.dumps({"scene_number": scene.scene_number, "status": "error",
-                                   "error": str(e)}) + "\n"
+        with SessionLocal() as stream_db:
+            for sid in scene_ids:
+                scene = stream_db.get(Scene, sid)
+                if not scene:
+                    continue
+                if scene.analyzed and not payload.force:
+                    yield json.dumps({"scene_number": scene.scene_number, "status": "cached"}) + "\n"
+                    continue
+                try:
+                    result = await analyze_scene(stream_db, scene, project.style_prompt, mode, orchestrator)
+                    scene.dominant_emotion = result["dominant_emotion"]
+                    scene.emotional_intensity = result["emotional_intensity"]
+                    scene.tension_score = result["tension_score"]
+                    scene.pacing_score = result["pacing_score"]
+                    scene.themes = result["themes"]
+                    scene.genre_tags = result["genre_tags"]
+                    scene.cinematic_json = result["cinematic"]
+                    scene.director_notes = result["director_notes"]
+                    scene.analyzed = 1
+                    stream_db.commit()
+                    yield json.dumps({
+                        "scene_number": scene.scene_number, "status": "done",
+                        "dominant_emotion": scene.dominant_emotion,
+                        "provider": result.get("_meta", {}).get("provider", "local"),
+                    }) + "\n"
+                except Exception as e:
+                    yield json.dumps({"scene_number": scene.scene_number, "status": "error",
+                                       "error": str(e)}) + "\n"
 
     return StreamingResponse(stream(), media_type="application/x-ndjson")

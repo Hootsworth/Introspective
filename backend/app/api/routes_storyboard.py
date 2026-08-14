@@ -123,7 +123,7 @@ async def generate_scene_frame(
 
         image_downloaded = False
         try:
-            async with httpx.AsyncClient(timeout=45.0) as http_client:
+            async with httpx.AsyncClient(timeout=45.0, follow_redirects=True) as http_client:
                 resp = await http_client.get(flux_url)
                 if resp.status_code == 200 and len(resp.content) > 1000:
                     with open(file_path, "wb") as f:
