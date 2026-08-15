@@ -1,154 +1,184 @@
-# Script2Vision
+<p align="center">
+  <img src="frontend/public/introspective-logo.png" alt="INTROSPECTIVE Logo" width="520" />
+</p>
 
-A local-first AI pre-production assistant that turns a screenplay into a
-structured cinematic planning package: scenes, characters, emotion/tension/
-pacing analysis, cinematic metadata (lighting, camera, lens, palette), an
-auto-derived shot list, director notes, a character relationship graph, and
-exports to JSON/Markdown/PDF/ZIP.
+<p align="center">
+  <strong>The Local-First AI Pre-Production & Cinematic Visualization Suite</strong>
+</p>
 
-Built as **Python (FastAPI) backend + React (Vite) frontend** so it runs
-anywhere — no Xcode required. See "Native macOS notes" below for the one
-piece of the original spec (Apple Foundation Models) that genuinely needs a
-Swift shell.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Active_Development-1f4b68?style=flat-square" alt="Status" />
+  <img src="https://img.shields.io/badge/Frontend-React_19_+_Vite-18232d?style=flat-square" alt="Frontend" />
+  <img src="https://img.shields.io/badge/Backend-FastAPI_+_Python_3.10+-18232d?style=flat-square" alt="Backend" />
+  <img src="https://img.shields.io/badge/AI_Engine-Local_|_Cloud_|_Hybrid-1f4b68?style=flat-square" alt="AI Engine" />
+  <img src="https://img.shields.io/badge/Security-Fernet_Encrypted_Keys-green?style=flat-square" alt="Security" />
+</p>
 
-## Architecture
+---
+
+## 🌟 Overview
+
+**INTROSPECTIVE** (formerly *Script2Vision*) is a comprehensive, local-first pre-production intelligence platform that transforms raw screenplays into structured, actionable cinematic planning assets. 
+
+Designed for directors, cinematographers, screenwriters, and creative producers, Introspective bridges the gap between text and visual execution. It analyzes dramatic tension, emotional pacing, scene lighting, lenses, camera movement, character relationship dynamics, and generates complete storyboards, mood boards, pitch decks, animatics, and production-ready exports.
+
+---
+
+## ✨ Key Features
+
+### 🎬 Screenplay Parsing & Breakdown
+- **Deterministic & Offline**: Parses Fountain and industry-standard script formats instantly without cloud latency.
+- **Granular Scene Splitting**: Automatically extracts sluglines, scene headers, action blocks, character dialogue, parentheticals, and transitions.
+
+### 🧠 Cinematic & Dramatic Intelligence
+- **Scene-by-Scene Analysis**: Calculates emotional tone, tension gradients, pacing scores, and visual motifs.
+- **Camera & Lighting Metadata**: Generates suggested camera shots, lenses, lighting styles, color palettes, and director notes.
+- **Deterministic Caching**: Content-hashed scene caching guarantees you never re-analyze or incur API charges for unchanged scenes.
+
+### 👥 Character Intelligence & Relationship Graphs
+- **Entity Extraction**: Auto-identifies characters, aliases, and speaking frequencies.
+- **Interactive Co-occurrence Graph**: Visualizes dynamic character relationships and scene-by-scene interactions without external dependencies.
+
+### 🎥 Shot List & Director Journal
+- **Automated Shot Lists**: Generates shot plans with estimated screen time, lens choices, and scene composition based on dialogue/action length.
+- **Director Notes & Themes**: Tracks subtext, character intentions, and pacing cues across drafts.
+
+### 🖼️ Visual Studio: Storyboards, Mood Boards & Animatics
+- **Image Generation Integrations**: Compatible with local and networked image generators including **Flux Klein 4B**, **ComfyUI**, **Automatic1111**, and local SDXL backends.
+- **Storyboard Sequencer**: Organize visual beats into sequential shot boards.
+- **Animatic Player**: Real-time playback preview with pan/zoom timing and transitions.
+- **Pitch Deck Builder**: Generate executive pitch decks with cinematic decks, character bios, and key art.
+
+### 🔐 Privacy-First AI & Local Keystore
+- **Triple Inference Modes**:
+  - **Local Only**: Powered by [Ollama](https://ollama.com) (e.g. `llama3.2`, `mistral`, `qwen2.5`) with zero data leaving your machine.
+  - **Cloud Only**: Connect OpenAI (`gpt-4o`, `gpt-4o-mini`) or Google Gemini (`gemini-2.5-flash`, `gemini-2.0-pro`).
+  - **Hybrid (Recommended)**: Runs local models first, seamlessly falling back to cloud for complex queries with strict character caps.
+- **Encrypted Storage**: API keys are encrypted at rest using PBKDF2 + Fernet (`keystore.enc`).
+
+### 📦 Multi-Format Production Exports
+- Export complete production packages in **PDF**, **Markdown**, **JSON**, or as a unified **ZIP Package** containing scripts, shot lists, character sheets, and generated artwork.
+
+---
+
+## 🏗️ Architecture
 
 ```
-backend/
-  app/
-    main.py                  FastAPI app, CORS, router registration
-    config.py                All paths and defaults in one place
-    db.py                    SQLAlchemy models: Project, Script, Scene,
-                              Character, AICacheEntry
-    models/schemas.py        Pydantic request/response schemas
-    services/
-      parser.py               Deterministic screenplay parser (sluglines,
-                               scenes, dialogue, action, transitions)
-      character_extraction.py Character + alias extraction
-      cinematic_analysis.py   Builds per-scene AI prompts, normalizes output
-      cache.py                Deterministic AI response cache (SQLite)
-      export.py                JSON / Markdown / PDF / ZIP export
-      ai/
-        base.py                Common backend interface
-        ollama_client.py       Local inference via Ollama
-        openai_client.py       Cloud: OpenAI (free-text model field)
-        gemini_client.py       Cloud: Gemini (free-text model field)
-        orchestrator.py        Local/Cloud/Hybrid routing + caching, the
-                                single choke point every AI call goes through
-    storage/keystore.py       Encrypted local API key storage (Fernet)
-    api/                      REST routes (projects, scripts, characters,
-                               settings, export)
-
-frontend/
-  src/
-    api/client.js             Typed fetch wrapper for every backend endpoint
-    pages/                    Dashboard, ScriptViewer, SceneExplorer,
-                               CharacterExplorer, RelationshipGraph,
-                               ShotList, DirectorNotes, Exports, Settings,
-                               ImageStub (storyboard/mood board placeholder)
-    components/                Sidebar, TopBar, shared UI primitives
-    index.css                  Design tokens (light/dark, accent colors,
-                                type scale)
+introspective/
+├── backend/
+│   ├── app/
+│   │   ├── main.py                  # FastAPI application entry & router registration
+│   │   ├── config.py                # Global configuration & environment paths
+│   │   ├── db.py                    # SQLite database models (Project, Script, Scene, etc.)
+│   │   ├── models/schemas.py        # Pydantic validation schemas
+│   │   ├── api/                     # REST API endpoints (projects, scripts, settings, etc.)
+│   │   ├── services/
+│   │   │   ├── parser.py            # Screenplay parsing engine
+│   │   │   ├── character_extraction.py # Character entity & alias consolidation
+│   │   │   ├── cinematic_analysis.py# AI prompt builder & output normalizer
+│   │   │   ├── cache.py             # SQLite deterministic AI cache
+│   │   │   ├── export.py            # PDF, Markdown, JSON & ZIP export generators
+│   │   │   ├── animatic.py          # Animatic timeline & preview compilation
+│   │   │   ├── ai/                  # AI orchestrator & backend clients (Ollama, OpenAI, Gemini)
+│   │   │   └── image/               # Image generation hooks (ComfyUI, Flux, A1111)
+│   │   └── storage/keystore.py      # Encrypted local keystore
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── public/
+│   │   └── introspective-logo.png   # Introspective branding asset
+│   ├── src/
+│   │   ├── App.jsx                  # Main application router & core layout
+│   │   ├── api/client.js            # API client wrapper
+│   │   ├── components/              # Collapsible Sidebar, PitchDeck, AnimaticPlayer, UI kit
+│   │   └── pages/                   # Dashboard, ScriptViewer, SceneExplorer, CharacterExplorer,
+│   │                                # RelationshipGraph, ShotList, DirectorNotes, Settings, Exports
+│   └── package.json
 ```
 
-## Running it
+---
 
-**Backend:**
+## 🚀 Getting Started
+
+### Prerequisites
+- **Python 3.10+**
+- **Node.js 18+ & npm**
+- *(Optional)* **[Ollama](https://ollama.com)** for local LLM inference
+- *(Optional)* **[ComfyUI](https://github.com/comfyanonymous/ComfyUI)** or **Automatic1111** for image generation
+
+---
+
+### 1. Backend Setup
+
 ```bash
+# Navigate to the backend directory
 cd backend
-python3 -m venv .venv && source .venv/bin/activate   # optional but recommended
+
+# Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Start the FastAPI server
 python3 -m uvicorn app.main:app --reload --port 8420
 ```
 
-**Frontend** (separate terminal):
+The backend server will start at `http://127.0.0.1:8420`.
+
+---
+
+### 2. Frontend Setup
+
 ```bash
+# In a new terminal, navigate to the frontend directory
 cd frontend
+
+# Install dependencies
 npm install
+
+# Start the Vite development server
 npm run dev
 ```
 
-Open http://localhost:5173. The frontend expects the API at
-`http://127.0.0.1:8420` (see `frontend/src/api/client.js` — change `BASE` if
-you run the backend elsewhere).
+Open `http://localhost:5173` in your browser.
 
-**Local inference (optional, for the "Local Only" / "Hybrid" AI modes):**
-Install [Ollama](https://ollama.com), pull a model (e.g. `ollama pull
-llama3.2`), and it'll be auto-detected on Settings → Local Inference. No
-Ollama running just means Local mode fails and Hybrid mode falls back to
-whatever cloud key you've configured — nothing crashes.
+---
 
-**Cloud inference (optional):** add an OpenAI and/or Gemini API key in
-Settings. Keys are encrypted at rest in `backend/data/keystore.enc` (Fernet,
-key derived via PBKDF2) and never leave your machine except to the
-respective provider's API when you actually trigger a cloud analysis.
+## ⚙️ Configuration & AI Modes
 
-## What's fully built vs. what's a stub
+Navigate to **Settings** in the application interface to configure your environment:
 
-**Fully built, real, working end to end:**
-- Screenplay parsing (sluglines, scenes, characters, dialogue, action,
-  transitions) — deterministic, offline, instant
-- Character extraction with alias consolidation
-- AI orchestration with Local/Cloud/Hybrid modes, deterministic per-scene
-  caching (never re-bills for an unchanged scene), and a hard truncation
-  safety valve on cloud prompt size
-- Per-scene emotion/tension/pacing/theme/genre + full cinematic metadata
-  (lighting, camera, lens, movement, composition, palette, film stock,
-  visual motifs) + director notes
-- Character relationship graph — computed from real scene co-occurrence
-  data, no AI needed
-- Shot list — auto-derived from the cinematic analysis + a duration
-  estimate from dialogue/action word count, no AI needed
-- JSON / Markdown / PDF / ZIP export
-- Settings: encrypted API keys, free-text model fields (never a dropdown,
-  per the spec — so new model names work with zero code changes), AI mode,
-  image backend selector
-- Dark/light mode, macOS-native design language throughout
+| AI Mode | Description | Requirements |
+| :--- | :--- | :--- |
+| **Local Only** | 100% private, runs entirely on your local hardware. | Ollama running at `http://localhost:11434` with any model (e.g. `ollama pull llama3.2`). |
+| **Hybrid** *(Default)* | Attempts local Ollama inference first; falls back to cloud if unavailable or on high-complexity tasks. | Ollama and/or an OpenAI / Gemini API key. |
+| **Cloud Only** | Directly calls OpenAI or Google Gemini. | Valid OpenAI or Gemini API Key entered in Settings. |
 
-**Deliberately stubbed, with a clean extension point:**
-- Storyboard, Mood Board, Character Sheets, Location Boards — these need an
-  actual image generation backend (SDXL/ComfyUI/Automatic1111) running
-  locally, which isn't something buildable/runnable inside a chat sandbox.
-  The `ImageStub` page explains the extension point directly: implement one
-  class with a `generate(prompt, style, count)` method in
-  `backend/app/services/image/`, register it against
-  `config.DEFAULT_IMAGE_BACKEND`, and write output to
-  `data/generated/<project_id>/<kind>/` — everything downstream (the ZIP
-  export, the stub pages) already knows to look there.
-- Animatics (MP4 export of pan/zoom/dissolve over generated frames) —
-  depends on the image backend above existing first.
+### Environment Variables (Optional)
+You can customize backend defaults by setting environment variables or creating a `.env` file in `backend/`:
 
-## Native macOS notes (Apple Foundation Models, Keychain)
+```env
+S2V_AI_MODE=hybrid
+S2V_OLLAMA_URL=http://localhost:11434
+S2V_LOCAL_MODEL=llama3.2
+S2V_OPENAI_MODEL=gpt-4o-mini
+S2V_GEMINI_MODEL=gemini-2.5-flash
+S2V_IMAGE_BACKEND=flux_klein_4b
+S2V_COMFYUI_URL=http://127.0.0.1:8188
+```
 
-The original spec calls for Apple Foundation Models as the primary local
-backend and macOS Keychain for key storage. Both are Swift-only APIs with
-no Python bridge — they cannot be called from this FastAPI backend, and
-can't be compiled/run in a non-macOS sandbox regardless of language. If you
-want the true native experience:
+---
 
-1. **Foundation Models**: implement a class matching `services/ai/base.py`'s
-   `AIBackend` interface as a small Swift XPC service or embedded server
-   that the Python backend calls over localhost — same pattern as the
-   Ollama client, just swapping the HTTP target. Register it in
-   `orchestrator.py` ahead of Ollama in the local fallback chain.
-2. **Keychain**: swap `storage/keystore.py`'s Fernet-based implementation
-   for calls into the `keyring` package's macOS backend (`keyring.set_password`
-   / `get_password`), which talks to Keychain directly. The rest of the
-   codebase only calls `get_secret`/`save_secret`, so this is a one-file change.
-3. **Packaging**: wrap the FastAPI backend as a bundled binary (PyInstaller)
-   launched by a thin SwiftUI shell, or rebuild the frontend views natively
-   in SwiftUI against the same REST API — the API layer doesn't care which
-   one you pick.
+## 🛡️ Privacy & Security
 
-## Credit optimization (how the spec's cost rules are actually enforced)
+- **No Unsolicited Telemetry**: Introspective does not log or transmit your screenplays to external telemetry endpoints.
+- **Local SQLite & Files**: Projects, parsed scenes, and AI cache entries reside strictly on your local disk (`backend/data/`).
+- **Encrypted Secrets**: Cloud provider API keys are encrypted using symmetric Fernet keys derived with PBKDF2 and saved in `backend/data/keystore.enc`.
 
-- Every AI call goes through `AIOrchestrator.run()` — no code path calls a
-  backend client directly.
-- Prompts are built deterministically per scene (`cinematic_analysis.py`),
-  so identical scenes always hash to the same cache key
-  (`services/cache.py`) and never re-bill, across app restarts.
-- Cloud prompts are hard-truncated at `MAX_CLOUD_INPUT_CHARS` regardless of
-  mode, as a last-resort safety valve — but in practice a prompt is already
-  a single scene's structured text, never the full screenplay.
-- Hybrid mode always tries local first; cloud is fallback-only, and only
-  activates if a key is actually configured.
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
