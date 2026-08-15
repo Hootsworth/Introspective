@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { api } from "../api/client";
 import { Button, EmptyState, Meter, Pill } from "../components/ui";
+import { useToast } from "../components/ToastProvider";
 import uiStyles from "../components/ui.module.css";
 import styles from "./SceneExplorer.module.css";
 
@@ -14,6 +15,7 @@ export default function SceneExplorer() {
   const { script, project, refreshScript } = useOutletContext();
   const [expanded, setExpanded] = useState(null);
   const [busyId, setBusyId] = useState(null);
+  const { notify } = useToast();
 
   if (!script || !script.scenes.length) {
     return (
@@ -31,8 +33,9 @@ export default function SceneExplorer() {
     try {
       await api.analyzeScene(sceneId, { mode_override: project.ai_mode });
       await refreshScript(script.id);
+      notify("Scene analysis complete", { tone: "success" });
     } catch (e) {
-      alert(e.message);
+      notify(e.message || "Analysis failed", { tone: "error", duration: 0 });
     } finally {
       setBusyId(null);
     }

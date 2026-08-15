@@ -1,0 +1,39 @@
+.stack {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  max-width: min(390px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+  font-size: 12px;
+  pointer-events: auto;
+  animation: toastIn .18s ease-out;
+}
+
+.dot { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: var(--accent-cyan); }
+.success .dot { background: #3e9b75; }
+.error .dot { background: var(--accent-red); }
+.message { line-height: 1.3; }
+.action { padding: 3px 4px; border: 0; background: transparent; color: var(--accent-cyan); font-size: 11px; font-weight: 750; white-space: nowrap; }
+.close { padding: 0 2px; border: 0; background: transparent; color: var(--text-faint); font-size: 17px; line-height: 1; }
+.close:hover { color: var(--text); }
+
+@keyframes toastIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+@media (max-width: 720px) { .stack { right: 12px; bottom: 78px; } }

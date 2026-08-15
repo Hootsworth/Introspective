@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { Button } from "../components/ui";
+import { useToast } from "../components/ToastProvider";
 import LoadingState from "../components/LoadingState";
 import styles from "./ScriptViewer.module.css";
 
@@ -28,6 +29,8 @@ export default function ScriptViewer() {
   const [notesOpen, setNotesOpen] = useState(true);
   const [notes, setNotes] = useState([]);
   const [drafts, setDrafts] = useState({});
+  const [savedAt, setSavedAt] = useState(null);
+  const { notify } = useToast();
   const storageKey = script ? `s2v-notes-${project.id}-${script.id}` : null;
   const draftKey = script ? `s2v-draft-${project.id}-${script.id}` : null;
 
@@ -50,15 +53,19 @@ export default function ScriptViewer() {
   function saveNotes(nextNotes) { setNotes(nextNotes); if (storageKey) localStorage.setItem(storageKey, JSON.stringify(nextNotes)); }
   function addNote() { saveNotes([{ id: crypto.randomUUID(), text: "", color: NOTE_COLORS[notes.length % NOTE_COLORS.length] }, ...notes]); }
   function updateNote(id, patch) { saveNotes(notes.map((note) => note.id === id ? { ...note, ...patch } : note)); }
-  function removeNote(id) { saveNotes(notes.filter((note) => note.id !== id)); }
-  function saveDraft(key, value) { const next = { ...drafts, [key]: value }; setDrafts(next); if (draftKey) localStorage.setItem(draftKey, JSON.stringify(next)); }
+  function removeNote(id) {
+    const removed = notes.find((note) => note.id === id);
+    saveNotes(notes.filter((note) => note.id !== id));
+    notify("Note removed", { action: { label: "Undo", onClick: () => saveNotes([removed, ...notes.filter((note) => note.id !== id)]) } });
+  }
+  function saveDraft(key, value) { const next = { ...drafts, [key]: value }; setDrafts(next); if (draftKey) localStorage.setItem(draftKey, JSON.stringify(next)); setSavedAt(new Date()); }
   function valueFor(key, fallback) { return Object.prototype.hasOwnProperty.call(drafts, key) ? drafts[key] : fallback; }
 
   async function handleUpload(e) {
     const file = e.target.files?.[0]; if (!file) return;
     setUploading(true); setAnalysisError(null); setAnalysisSuccess(null);
-    try { const uploaded = await api.uploadScript(project.id, file); await refreshScripts(); setActiveScriptId(uploaded.id); await refreshCharacters(); }
-    catch (err) { setAnalysisError(err.message || "Failed to upload screenplay"); }
+    try { const uploaded = await api.uploadScript(project.id, file); await refreshScripts(); setActiveScriptId(uploaded.id); await refreshCharacters(); notify("Screenplay uploaded", { tone: "success" }); }
+    catch (err) { setAnalysisError(err.message || "Failed to upload screenplay"); notify(err.message || "Upload failed", { tone: "error", duration: 0 }); }
     finally { setUploading(false); if (fileRef.current) fileRef.current.value = ""; }
   }
 
@@ -77,9 +84,9 @@ export default function ScriptViewer() {
       });
       await refreshScript(script.id);
       if (errors.length) setAnalysisError(errors.join("\n"));
-      else if (newCount) setAnalysisSuccess(`Successfully analyzed ${newCount} scene(s).`);
+      else if (newCount) { setAnalysisSuccess(`Successfully analyzed ${newCount} scene(s).`); notify(`${newCount} scene${newCount === 1 ? "" : "s"} analyzed`, { tone: "success" }); }
       else if (cachedCount) setAnalysisSuccess(`All ${cachedCount} scenes are already analyzed.`);
-    } catch (err) { setAnalysisError(err.message || "Failed to analyze scenes"); }
+    } catch (err) { setAnalysisError(err.message || "Failed to analyze scenes"); notify(err.message || "Analysis failed", { tone: "error", duration: 0 }); }
     finally { setAnalyzing(false); }
   }
 
@@ -108,7 +115,7 @@ export default function ScriptViewer() {
           <article className={styles.page}>
             <div className={styles.paperMeta}><span>{script.filename}</span><span>INTROSPECTIVE EDITOR</span></div><div className={styles.scriptTitleHeader}>{script.parsed_title.toUpperCase()}</div><div className={styles.scriptDivider} />
             {currentScenes.map((scene) => <div key={scene.id} className={styles.sceneBlock}><div className={styles.sluglineRow}><div className={styles.sluglineMain}><span className={styles.sceneNum}>SHOT {String(scene.scene_number).padStart(2, "0")}</span><span className={styles.sluglineText}>{scene.slugline}</span></div>{scene.analyzed && <div className={styles.sceneTags}>{scene.dominant_emotion && <span className={styles.emotionBadge}>{scene.dominant_emotion}</span>}{scene.cinematic?.camera && <span className={styles.specTag}>{scene.cinematic.camera}</span>}</div>}</div>{scene.action_text && <EditableText multiline className={styles.actionText} value={valueFor(`${scene.id}:action`, scene.action_text)} onSave={(value) => saveDraft(`${scene.id}:action`, value)} />}{scene.dialogue.map((dialogue, index) => <div className={styles.dialogueBlock} key={index}><div className={styles.characterCue}>{dialogue.character}</div>{dialogue.parenthetical && <div className={styles.parenthetical}>({dialogue.parenthetical})</div>}<EditableText className={styles.dialogueLine} value={valueFor(`${scene.id}:dialogue:${index}`, dialogue.line)} onSave={(value) => saveDraft(`${scene.id}:dialogue:${index}`, value)} /></div>)}</div>)}
-            <div className={styles.paperFooter}><span>Editable draft · changes saved on this device</span><span>{page} / {pages.length}</span></div>
+            <div className={styles.paperFooter}><span>Editable draft · {savedAt ? `saved ${savedAt.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}` : "saved on this device"}</span><span>{page} / {pages.length}</span></div>
           </article>
         </section>
         {notesOpen && <aside className={styles.notesRail}><div className={styles.notesHeader}><div><div className={styles.readerKicker}>ANNOTATIONS</div><h2>Working notes</h2></div><button className={styles.addNoteBtn} onClick={addNote}>＋ Add note</button></div><p className={styles.notesHint}>Capture ideas, questions, and page-specific reminders while you read.</p><div className={styles.notesList}>{notes.length === 0 && <div className={styles.notesEmpty}>No notes yet.<br />Add a sticky note to begin.</div>}{notes.map((note) => <div key={note.id} className={`${styles.stickyNote} ${styles[`note${note.color[0].toUpperCase()}${note.color.slice(1)}`]}`}><div className={styles.stickyTop}><span className={styles.pin} /><select aria-label="Note color" value={note.color} onChange={(e) => updateNote(note.id, { color: e.target.value })}>{NOTE_COLORS.map((color) => <option key={color} value={color}>{color}</option>)}</select><button onClick={() => removeNote(note.id)} aria-label="Delete note">×</button></div><textarea autoFocus={!note.text} placeholder="Write a thought…" value={note.text} onChange={(e) => updateNote(note.id, { text: e.target.value })} /></div>)}</div></aside>}

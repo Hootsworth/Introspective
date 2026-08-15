@@ -1,0 +1,14 @@
+.backdrop { position: fixed; inset: 0; z-index: 90; display: flex; justify-content: center; align-items: flex-start; padding-top: 15vh; background: rgba(0, 0, 0, .28); backdrop-filter: blur(4px); }
+.panel { width: min(520px, calc(100vw - 32px)); overflow: hidden; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow-lg); }
+.searchRow { display: flex; align-items: center; gap: 9px; padding: 13px 14px; border-bottom: 1px solid var(--border-soft); }
+.searchIcon { color: var(--text-faint); font-size: 20px; line-height: 1; }
+.searchRow input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 14px; }
+.searchRow kbd, .footer { color: var(--text-faint); font: 10px var(--font-mono); }
+.list { padding: 7px; }
+.command { display: flex; align-items: center; gap: 11px; width: 100%; padding: 10px 9px; border: 0; border-radius: 6px; background: transparent; color: var(--text); text-align: left; font-size: 12px; font-weight: 650; }
+.command:hover, .selected { background: var(--surface-2); }
+.icon { width: 24px; color: var(--text-faint); font: 10px var(--font-mono); text-align: center; }
+.arrow { margin-left: auto; color: var(--text-faint); opacity: 0; }
+.selected .arrow { opacity: 1; color: var(--accent-cyan); }
+.empty { padding: 22px 10px; color: var(--text-dim); text-align: center; font-size: 12px; }
+.footer { display: flex; gap: 14px; padding: 9px 14px; border-top: 1px solid var(--border-soft); }

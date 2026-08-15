@@ -4,7 +4,7 @@ import { api } from "../api/client";
 
 import LoadingState from "../components/LoadingState";
 
-export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
+export default function ProjectLayout({ theme, setTheme, refreshProjects, focusMode, setFocusMode }) {
   const { projectId } = useParams();
   const navigate = useNavigate();
 
@@ -105,6 +105,7 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
         project, scripts, script, activeScriptId, setActiveScriptId,
         characters, refreshCharacters, refreshScript, refreshScripts,
         refreshProject, updateProjectSettings, navigate,
+        focusMode, setFocusMode,
       }}
     />
   );

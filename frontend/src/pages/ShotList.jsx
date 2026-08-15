@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
+import { api } from "../api/client";
 import { Button, EmptyState } from "../components/ui";
+import { useToast } from "../components/ToastProvider";
 import styles from "./ShotList.module.css";
 
 function estimateDurationSec(scene) {
@@ -27,8 +29,14 @@ function derivePurpose(scene) {
 }
 
 export default function ShotList() {
-  const { script } = useOutletContext();
+  const { script, refreshScript } = useOutletContext();
   const [search, setSearch] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [draft, setDraft] = useState(null);
+  const [savingId, setSavingId] = useState(null);
+  const [saveError, setSaveError] = useState(null);
+  const [savedId, setSavedId] = useState(null);
+  const { notify } = useToast();
 
   const analyzedScenes = useMemo(() => {
     if (!script) return [];
@@ -47,6 +55,7 @@ export default function ShotList() {
         shot: s.scene_number,
         slugline: (s.slugline.split("-")[0] || s.slugline).trim(),
         fullSlugline: s.slugline,
+        cinematic: s.cinematic || {},
         camera: s.cinematic?.camera || "Medium Shot",
         lens: s.cinematic?.lens_suggestion || "50mm Prime",
         movement: s.cinematic?.movement || "Static",
@@ -58,6 +67,62 @@ export default function ShotList() {
       };
     });
   }, [analyzedScenes]);
+
+  function startEditing(row) {
+    setSaveError(null);
+    setSavedId(null);
+    setEditingId(row.id);
+    setDraft({
+      slugline: row.fullSlugline,
+      camera: row.camera,
+      lens: row.lens,
+      movement: row.movement,
+      lighting: row.lighting,
+    });
+  }
+
+  function cancelEditing() {
+    setEditingId(null);
+    setDraft(null);
+    setSaveError(null);
+  }
+
+  async function saveEditing(row) {
+    if (!draft || !script) return;
+    setSavingId(row.id);
+    setSaveError(null);
+    try {
+      await api.updateScene(row.id, {
+        slugline: draft.slugline.trim() || row.fullSlugline,
+        cinematic: {
+          ...row.cinematic,
+          camera: draft.camera.trim() || "Medium Shot",
+          lens_suggestion: draft.lens.trim() || "50mm Prime",
+          movement: draft.movement.trim() || "Static",
+          lighting: draft.lighting.trim() || "Natural Ambient",
+        },
+      });
+      await refreshScript(script.id);
+      setSavedId(row.id);
+      setEditingId(null);
+      setDraft(null);
+      notify("Shot updated", {
+        tone: "success",
+        action: {
+          label: "Undo",
+          onClick: async () => {
+            await api.updateScene(row.id, { slugline: row.fullSlugline, cinematic: row.cinematic });
+            await refreshScript(script.id);
+            notify("Shot change undone", { tone: "success" });
+          },
+        },
+      });
+    } catch (err) {
+      setSaveError(err.message || "Could not save this shot");
+    } finally {
+      setSavingId(null);
+    }
+  }
 
   const filteredRows = useMemo(() => {
     if (!search.trim()) return rows;
@@ -146,11 +211,36 @@ export default function ShotList() {
               <th>Movement</th>
               <th>Est. Duration</th>
               <th>Emotional Beat</th>
+              <th aria-label="Edit shot" />
             </tr>
           </thead>
           <tbody>
             {filteredRows.map((r) => (
-              <tr key={r.id}>
+              editingId === r.id ? (
+                <tr key={r.id} className={styles.editingRow}>
+                  <td colSpan="7">
+                    <div className={styles.editor}>
+                      <div className={styles.editorTopline}>
+                        <span className={styles.editorLabel}>EDITING SHOT {String(r.shot).padStart(2, "0")}</span>
+                        <span className={styles.editorHint}>Changes save to this scene</span>
+                      </div>
+                      <div className={styles.editorGrid}>
+                        <label><span>Slugline</span><input value={draft.slugline} onChange={(e) => setDraft({ ...draft, slugline: e.target.value })} /></label>
+                        <label><span>Camera</span><input value={draft.camera} onChange={(e) => setDraft({ ...draft, camera: e.target.value })} /></label>
+                        <label><span>Lens</span><input value={draft.lens} onChange={(e) => setDraft({ ...draft, lens: e.target.value })} /></label>
+                        <label><span>Movement</span><input value={draft.movement} onChange={(e) => setDraft({ ...draft, movement: e.target.value })} /></label>
+                        <label><span>Lighting</span><input value={draft.lighting} onChange={(e) => setDraft({ ...draft, lighting: e.target.value })} /></label>
+                      </div>
+                      {saveError && <div className={styles.saveError}>{saveError}</div>}
+                      <div className={styles.editorActions}>
+                        <button type="button" className={styles.cancelButton} onClick={cancelEditing}>Cancel</button>
+                        <button type="button" className={styles.saveButton} onClick={() => saveEditing(r)} disabled={savingId === r.id}>{savingId === r.id ? "Saving…" : "Save shot"}</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+              <tr key={r.id} className={savedId === r.id ? styles.savedRow : ""}>
                 <td>
                   <span className={styles.shotNum}>SHOT {String(r.shot).padStart(2, "0")}</span>
                 </td>
@@ -170,7 +260,11 @@ export default function ShotList() {
                 <td>
                   <span style={{ color: "var(--text-dim)", fontSize: 12 }}>{r.purpose}</span>
                 </td>
+                <td className={styles.actionCell}>
+                  <button type="button" className={styles.editButton} onClick={() => startEditing(r)} aria-label={`Edit shot ${r.shot}`}>Edit</button>
+                </td>
               </tr>
+              )
             ))}
           </tbody>
         </table>

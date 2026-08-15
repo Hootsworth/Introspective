@@ -150,3 +150,147 @@
   font-weight: 600;
   color: var(--text);
 }
+
+.actionCell {
+  width: 58px;
+  text-align: right;
+}
+
+.editButton,
+.cancelButton,
+.saveButton {
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.editButton {
+  padding: 5px 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-faint);
+  opacity: 0;
+  transition: opacity .15s ease, color .15s ease, background .15s ease, border-color .15s ease;
+}
+
+.table tr:hover .editButton,
+.editButton:focus-visible {
+  opacity: 1;
+}
+
+.editButton:hover {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.editingRow td {
+  padding: 0;
+  background: var(--surface-1);
+}
+
+.editor {
+  padding: 16px 18px 17px;
+  border-left: 3px solid var(--accent-cyan);
+}
+
+.editorTopline,
+.editorActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.editorLabel {
+  color: var(--accent-cyan);
+  font: 700 10px var(--font-mono);
+  letter-spacing: .1em;
+}
+
+.editorHint {
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.editorGrid {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.5fr) repeat(4, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 14px 0 15px;
+}
+
+.editorGrid label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text-dim);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.editorGrid input {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.editorGrid input:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 0 2px var(--accent-cyan-soft);
+}
+
+.editorActions { justify-content: flex-end; }
+
+.cancelButton {
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-dim);
+}
+
+.cancelButton:hover { color: var(--text); }
+
+.saveButton {
+  padding: 7px 11px;
+  border: 1px solid var(--text);
+  background: var(--text);
+  color: var(--bg);
+}
+
+.saveButton:disabled { opacity: .55; cursor: wait; }
+
+.saveError {
+  margin-bottom: 10px;
+  color: var(--accent-red);
+  font-size: 11px;
+}
+
+.savedRow td { animation: savedFlash 1.4s ease-out; }
+
+@keyframes savedFlash {
+  0% { background: var(--accent-cyan-soft); }
+  100% { background: transparent; }
+}
+
+@media (max-width: 900px) {
+  .editorGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .editorGrid { grid-template-columns: 1fr; }
+  .editorHint { display: none; }
+  .editButton { opacity: 1; }
+}

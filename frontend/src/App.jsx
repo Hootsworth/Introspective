@@ -15,6 +15,7 @@ import ShotList from "./pages/ShotList";
 import DirectorNotes from "./pages/DirectorNotes";
 import Exports from "./pages/Exports";
 import ImageStub from "./pages/ImageStub";
+import CommandPalette from "./components/CommandPalette";
 
 export default function App() {
   const location = useLocation();
@@ -22,6 +23,8 @@ export default function App() {
   const [projects, setProjects] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState(null);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [focusMode, setFocusMode] = useState(() => localStorage.getItem("s2v-focus-mode") === "true");
 
   const refreshProjects = useCallback(async () => {
     try {
@@ -38,11 +41,33 @@ export default function App() {
     refreshProjects().finally(() => setLoaded(true));
   }, [refreshProjects]);
 
+  useEffect(() => {
+    localStorage.setItem("s2v-focus-mode", String(focusMode));
+  }, [focusMode]);
+
+  useEffect(() => {
+    function onKeyDown(event) {
+      const typing = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setCommandOpen(true);
+      } else if (event.key === "Escape" && !commandOpen) {
+        setFocusMode(false);
+      } else if (event.key === "?" && !typing) {
+        setCommandOpen(true);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [commandOpen]);
+
   const isDashboard = location.pathname === "/";
+  const projectMatch = location.pathname.match(/\/projects\/([^/]+)/);
+  const isFocusView = !isDashboard && focusMode;
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {!isDashboard && <Sidebar projects={projects} />}
+      {!isDashboard && !isFocusView && <Sidebar projects={projects} />}
       <main className="app-main" style={{ flex: 1, minWidth: 0 }}>
         {loaded && (
           <Routes>
@@ -58,10 +83,10 @@ export default function App() {
                 />
               }
             />
-            <Route path="/settings" element={<Settings theme={theme} setTheme={setTheme} />} />
+              <Route path="/settings" element={<Settings theme={theme} setTheme={setTheme} />} />
             <Route
               path="/projects/:projectId"
-              element={<ProjectLayout theme={theme} setTheme={setTheme} refreshProjects={refreshProjects} />}
+              element={<ProjectLayout theme={theme} setTheme={setTheme} refreshProjects={refreshProjects} focusMode={focusMode} setFocusMode={setFocusMode} />}
             >
               <Route path="script" element={<ScriptViewer />} />
               <Route path="scenes" element={<SceneExplorer />} />
@@ -76,6 +101,8 @@ export default function App() {
           </Routes>
         )}
       </main>
+      {isFocusView && <button className="focusExit" onClick={() => setFocusMode(false)}>Exit focus mode <span>Esc</span></button>}
+      <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} projectId={projectMatch?.[1]} />
     </div>
   );
 }

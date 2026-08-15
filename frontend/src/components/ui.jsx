@@ -1,11 +1,11 @@
 import styles from "./ui.module.css";
 
-export function Button({ children, primary, ghost, ...rest }) {
+export function Button({ children, primary, ghost, type = "button", ...rest }) {
   const cls = [styles.button, primary ? styles.buttonPrimary : "", ghost ? styles.buttonGhost : ""]
     .filter(Boolean)
     .join(" ");
   return (
-    <button className={cls} {...rest}>
+    <button type={type} className={cls} {...rest}>
       {children}
     </button>
   );

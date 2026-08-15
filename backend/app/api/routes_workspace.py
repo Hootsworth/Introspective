@@ -22,6 +22,8 @@ def update_scene(scene_id: str, payload: SceneUpdate, db: Session = Depends(get_
         scene.action_text = payload.action_text
     if payload.dialogue is not None:
         scene.dialogue_json = [line.model_dump() for line in payload.dialogue]
+    if payload.cinematic is not None:
+        scene.cinematic_json = payload.cinematic
     if payload.director_notes is not None:
         scene.director_notes = payload.director_notes
     db.commit()

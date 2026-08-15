@@ -87,6 +87,7 @@ class SceneUpdate(BaseModel):
     slugline: Optional[str] = None
     action_text: Optional[str] = None
     dialogue: Optional[list[DialogueLine]] = None
+    cinematic: Optional[dict[str, Any]] = None
     director_notes: Optional[str] = None
 
 

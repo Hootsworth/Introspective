@@ -8,12 +8,15 @@ import { neutralTheme } from "@astryxdesign/theme-neutral/built";
 import "@astryxdesign/theme-neutral/theme.css";
 import "./index.css";
 import App from "./App.jsx";
+import { ToastProvider } from "./components/ToastProvider";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Theme theme={neutralTheme}>
       <BrowserRouter>
-        <App />
+        <ToastProvider>
+          <App />
+        </ToastProvider>
       </BrowserRouter>
     </Theme>
   </StrictMode>

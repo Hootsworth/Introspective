@@ -6,10 +6,14 @@
 .summary { display: flex; align-items: baseline; gap: 8px; color: var(--text-dim); font-size: 12px; white-space: nowrap; }
 .summaryValue { color: var(--text); font-size: 28px; font-weight: 800; letter-spacing: -.04em; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; margin-top: 24px; }
+.workspaceHint { display: flex; align-items: center; gap: 10px; margin-top: 20px; color: var(--text-faint); font-size: 11px; }
+.workspaceHint span:first-child { color: var(--accent-cyan); font: 700 9px var(--font-mono); letter-spacing: .12em; }
 .projectCard { min-height: 240px; background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 20px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
 .projectCard:hover { transform: translateY(-2px); border-color: var(--accent-cyan); box-shadow: var(--shadow-md); }
 .projectTopline { display: flex; justify-content: space-between; align-items: center; }
 .projectIndex { color: var(--text-faint); font: 700 11px var(--font-mono); letter-spacing: .1em; }
+.pinBtn { margin-left: auto; padding: 2px 4px; border: 0; background: transparent; color: var(--text-faint); font-size: 16px; line-height: 1; opacity: .45; }
+.pinBtn:hover, .pinActive { color: var(--accent-cyan); opacity: 1; }
 .modeBadge { background: var(--text); color: var(--bg); padding: 4px 7px; border-radius: 4px; font: 700 9px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
 .projectContent { margin-top: 34px; }
 .projectTitle { color: var(--text); font-size: 23px; line-height: 1.1; font-weight: 800; letter-spacing: -.03em; }

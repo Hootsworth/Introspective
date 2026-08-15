@@ -4,6 +4,8 @@ import { api } from "../api/client";
 import Modal from "../components/Modal";
 
 import { Button, EmptyState } from "../components/ui";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useToast } from "../components/ToastProvider";
 import styles from "./Dashboard.module.css";
 
 const MODES = [
@@ -23,6 +25,20 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
   const [mode, setMode] = useState("hybrid");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+  const [recentIds, setRecentIds] = useLocalStorage("s2v-recent-projects", []);
+  const [pinnedIds, setPinnedIds] = useLocalStorage("s2v-pinned-projects", []);
+  const { notify } = useToast();
+
+  function openProject(project) {
+    setRecentIds([project.id, ...recentIds.filter((id) => id !== project.id)].slice(0, 6));
+    navigate(`/projects/${project.id}/script`);
+  }
+
+  function togglePin(projectId, event) {
+    event.stopPropagation();
+    setPinnedIds(pinnedIds.includes(projectId) ? pinnedIds.filter((id) => id !== projectId) : [projectId, ...pinnedIds]);
+    notify(pinnedIds.includes(projectId) ? "Project unpinned" : "Project pinned", { tone: "success" });
+  }
 
   function openCreateModal() {
     setTitle("");
@@ -59,6 +75,7 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
       });
       await refreshProjects();
       setCreating(false);
+      notify("Project created", { tone: "success" });
       navigate(`/projects/${project.id}/script`);
     } catch (err) {
       setError(err.message || "Failed to create project");
@@ -80,6 +97,7 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
       });
       await refreshProjects();
       setEditingProject(null);
+      notify("Project details saved", { tone: "success" });
     } catch (err) {
       setError(err.message || "Failed to update project");
     } finally {
@@ -94,6 +112,7 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
       await api.deleteProject(deletingProject.id);
       await refreshProjects();
       setDeletingProject(null);
+      notify("Project deleted", { tone: "success" });
     } catch (err) {
       setError(err.message || "Failed to delete project");
     } finally {
@@ -139,18 +158,25 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
             />
           </div>
         ) : (
-          <div className={styles.grid}>
-            {projects.map((p) => (
+          <>
+            <div className={styles.workspaceHint}><span>YOUR WORKSPACE</span><span>Pinned projects stay at the top · recently opened projects follow</span></div>
+            <div className={styles.grid}>
+            {[...projects].sort((a, b) => {
+              const pinDelta = Number(pinnedIds.includes(b.id)) - Number(pinnedIds.includes(a.id));
+              if (pinDelta) return pinDelta;
+              return recentIds.indexOf(a.id) - recentIds.indexOf(b.id);
+            }).map((p) => (
               <div
                 key={p.id}
                 className={styles.projectCard}
-                onClick={() => navigate(`/projects/${p.id}/script`)}
+                onClick={() => openProject(p)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => e.key === "Enter" && navigate(`/projects/${p.id}/script`)}
+                onKeyDown={(e) => e.key === "Enter" && openProject(p)}
               >
                 <div className={styles.projectTopline}>
                   <span className={styles.projectIndex}>{String(projects.indexOf(p) + 1).padStart(2, "0")}</span>
+                  <button className={`${styles.pinBtn} ${pinnedIds.includes(p.id) ? styles.pinActive : ""}`} onClick={(e) => togglePin(p.id, e)} aria-label={pinnedIds.includes(p.id) ? `Unpin ${p.title}` : `Pin ${p.title}`} title={pinnedIds.includes(p.id) ? "Unpin project" : "Pin project"}>★</button>
                   <span className={styles.modeBadge}>{p.ai_mode}</span>
                 </div>
 
@@ -168,7 +194,7 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
                       className={styles.actionBtn}
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/projects/${p.id}/script`);
+                        openProject(p);
                       }}
                     >
                       Open
@@ -194,7 +220,8 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
               <span className={styles.plus}>+</span>
               <span><strong>New project</strong><small>Start a screenplay workspace</small></span>
             </button>
-          </div>
+            </div>
+          </>
         )}
       </div>
 
