@@ -1,8 +1,9 @@
 .wrap {
-  padding: 0 32px 40px;
+  padding: 26px 40px 56px;
   max-width: 1380px;
   margin: 0 auto;
 }
+.wrap::before { content: "CHARACTER DYNAMICS"; display: block; color: var(--accent-cyan); font: 700 10px var(--font-mono); letter-spacing: .14em; margin: 6px 0 18px; }
 
 .layout {
   display: grid;
@@ -17,7 +18,7 @@
 }
 
 .graphCard {
-  background: var(--surface-2);
+  background: var(--surface);
   border: 1px solid var(--border-soft);
   border-radius: 10px;
   padding: 20px;
@@ -33,7 +34,7 @@
 }
 
 .inspectorCard {
-  background: var(--surface-2);
+  background: var(--surface);
   border: 1px solid var(--border-soft);
   border-radius: 10px;
   padding: 20px;

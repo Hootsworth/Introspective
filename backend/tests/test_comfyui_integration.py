@@ -1,8 +1,12 @@
-"""
-Automated unit and integration test suite for ComfyUI client, status, and diagnostic runner.
-Uses standard library unittest so it runs without extra test runner dependencies.
-"""
+import sys
+from pathlib import Path
 import unittest
+
+# Ensure backend root is on sys.path for test discovery
+backend_dir = Path(__file__).resolve().parent.parent
+if str(backend_dir) not in sys.path:
+    sys.path.insert(0, str(backend_dir))
+
 from fastapi.testclient import TestClient
 
 from app.main import app

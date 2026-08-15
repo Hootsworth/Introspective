@@ -35,9 +35,11 @@ def calculate_scene_duration(scene: Scene) -> float:
 
     dialogue_words = 0
     if scene.dialogue_json:
-        for line in scene.dialogue_json:
-            if isinstance(line, dict) and "text" in line:
-                dialogue_words += len(line["text"].split())
+        for item in scene.dialogue_json:
+            if isinstance(item, dict):
+                text = item.get("line") or item.get("text", "")
+                if text:
+                    dialogue_words += len(text.split())
 
     dialogue_bonus = min(dialogue_words * 0.25, 8.0)
     total_duration = round(base_sec + action_bonus + dialogue_bonus, 1)
@@ -63,7 +65,7 @@ def build_animatic_manifest(db: Session, project: Project) -> Dict[str, Any]:
             first_line = sc.dialogue_json[0]
             if isinstance(first_line, dict):
                 speaker = first_line.get("character", "")
-                text = first_line.get("text", "")
+                text = first_line.get("line") or first_line.get("text", "")
                 top_dialogue = f"{speaker}: \"{text}\"" if speaker else text
 
         reel_shots.append({

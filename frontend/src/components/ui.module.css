@@ -4,107 +4,34 @@
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
-
 .button {
-  font-size: 13px;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
+  min-height: 36px;
+  padding: 8px 14px;
   border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   background: var(--surface);
   color: var(--text);
-  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .01em;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  transition: transform 0.1s ease, background 0.15s ease, opacity 0.15s ease;
+  transition: background .15s ease, border-color .15s ease, transform .15s ease;
 }
-.button:hover {
-  background: var(--surface-2);
-}
-.button:active {
-  transform: scale(0.97);
-}
-.button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.buttonPrimary {
-  background: var(--accent-amber);
-  border-color: var(--accent-amber);
-  color: #fff;
-}
-.buttonPrimary:hover {
-  filter: brightness(1.05);
-  background: var(--accent-amber);
-}
-
-.buttonGhost {
-  background: transparent;
-  border-color: transparent;
-}
-.buttonGhost:hover {
-  background: rgba(128, 128, 128, 0.1);
-}
-
-.slateBadge {
-  font-family: var(--font-mono);
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text-dim);
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  padding: 2px 7px;
-  position: relative;
-}
-
-.pill {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 9px;
-  border-radius: 20px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-}
-
-.pillAmber {
-  background: var(--accent-amber-soft);
-  color: var(--accent-amber);
-}
-.pillTeal {
-  background: var(--accent-teal-soft);
-  color: var(--accent-teal);
-}
-.pillNeutral {
-  background: var(--surface-2);
-  color: var(--text-dim);
-  border: 1px solid var(--border);
-}
-
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 16px;
-  padding: 48px 36px;
-  border: 1px dashed var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--surface-2);
-  max-width: 600px;
-  margin: 40px auto;
-}
-.emptyStateTitle {
-  font-family: var(--font-display);
-  font-size: 22px;
-  letter-spacing: 0.01em;
-}
-.emptyStateBody {
-  color: var(--text-dim);
-  font-size: 13.5px;
-  line-height: 1.6;
-}
+.button:hover { background: var(--surface-2); border-color: var(--text-faint); }
+.button:active { transform: translateY(1px); }
+.button:disabled { opacity: .5; cursor: not-allowed; }
+.buttonPrimary { background: var(--text); border-color: var(--text); color: var(--bg); }
+.buttonPrimary:hover { background: var(--accent-cyan); border-color: var(--accent-cyan); color: var(--bg); }
+.buttonGhost { background: transparent; border-color: transparent; }
+.buttonGhost:hover { background: var(--surface-2); border-color: var(--border-soft); }
+.slateBadge, .pill { display: inline-flex; align-items: center; white-space: nowrap; }
+.slateBadge { font: 700 10px var(--font-mono); color: var(--text-dim); background: var(--surface-2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 7px; }
+.pill { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 20px; }
+.pillAmber, .pillTeal { background: var(--accent-cyan); color: var(--bg); }
+.pillNeutral { background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--border); }
+.emptyState { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px; padding: 48px 32px; border: 1px dashed var(--border); border-radius: var(--radius-lg); background: var(--surface); max-width: 600px; margin: 40px auto; }
+.emptyStateTitle { color: var(--text); font-size: 20px; font-weight: 750; letter-spacing: -.02em; }
+.emptyStateBody { color: var(--text-dim); font-size: 13px; line-height: 1.6; }

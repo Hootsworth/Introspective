@@ -4,7 +4,10 @@ import { Button, EmptyState } from "../components/ui";
 import styles from "./ShotList.module.css";
 
 function estimateDurationSec(scene) {
-  const dialogueWords = (scene.dialogue || []).reduce((sum, d) => sum + d.line.split(/\s+/).length, 0);
+  const dialogueWords = (scene.dialogue || []).reduce(
+    (sum, d) => sum + (d?.line ? d.line.split(/\s+/).filter(Boolean).length : 0),
+    0
+  );
   const actionWords = (scene.action_text || "").split(/\s+/).filter(Boolean).length;
   return Math.max(3, Math.round((dialogueWords / 2.3) + (actionWords / 6)));
 }
@@ -106,6 +109,11 @@ export default function ShotList() {
           <span className={styles.metricValue}>35mm / 50mm</span>
           <span className={styles.metricSub}>Anamorphic & Prime lens spec</span>
         </div>
+      </div>
+
+      <div className={styles.timelineCard}>
+        <div className={styles.timelineHeader}><span className={styles.metricLabel}>Scene Timeline</span><span className={styles.timelineHint}>Relative runtime by shot</span></div>
+        <div className={styles.timelineTrack}>{rows.map((row) => <button key={row.id} className={styles.timelineSegment} style={{ flex: row.durationSec }} title={`Shot ${row.shot}: ${row.durationStr}`} onClick={() => setSearch(row.slugline)}><span>{String(row.shot).padStart(2, "0")}</span></button>)}</div>
       </div>
 
       {/* Controls & Search Toolbar */}

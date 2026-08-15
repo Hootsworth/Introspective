@@ -1,4 +1,6 @@
-const BASE = typeof window !== "undefined" && window.location.origin.includes("5173") ? "" : "http://127.0.0.1:8420";
+const BASE = (typeof window !== "undefined")
+  ? (import.meta.env?.VITE_API_BASE ?? "")
+  : "http://127.0.0.1:8430";
 
 async function request(path, options = {}) {
   const method = (options.method || "GET").toUpperCase();
@@ -53,7 +55,13 @@ export const api = {
     return request(`/api/projects/${projectId}/scripts`, { method: "POST", body: form });
   },
   getScript: (scriptId) => request(`/api/scripts/${scriptId}`),
+  updateScene: (sceneId, data) => request(`/api/scenes/${sceneId}`, { method: "PATCH", body: JSON.stringify(data) }),
   deleteScript: (scriptId) => request(`/api/scripts/${scriptId}`, { method: "DELETE" }),
+  listNotes: (projectId) => request(`/api/projects/${projectId}/notes`),
+  createNote: (projectId, data) => request(`/api/projects/${projectId}/notes`, { method: "POST", body: JSON.stringify(data) }),
+  updateNote: (noteId, data) => request(`/api/notes/${noteId}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteNote: (noteId) => request(`/api/notes/${noteId}`, { method: "DELETE" }),
+  searchProject: (projectId, q) => request(`/api/projects/${projectId}/search?q=${encodeURIComponent(q)}`),
 
   // Characters
   listCharacters: (projectId) => request(`/api/projects/${projectId}/characters`),

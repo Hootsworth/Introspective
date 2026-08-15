@@ -44,6 +44,14 @@ export default function DirectorNotes() {
 
   return (
     <div className={styles.wrap}>
+      <div className={styles.journalHeader}>
+        <div>
+          <div className={styles.kicker}>PRODUCTION JOURNAL</div>
+          <h2 className={styles.journalTitle}>Director’s notes</h2>
+          <p className={styles.journalDesc}>A working record of tone, rhythm, and visual intent across the screenplay.</p>
+        </div>
+        <div className={styles.noteCount}><strong>{filteredScenes.length}</strong><span>scene notes</span></div>
+      </div>
       {/* Controls & Search Toolbar */}
       <div className={styles.controlsBar}>
         <input
@@ -54,7 +62,7 @@ export default function DirectorNotes() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <span style={{ fontSize: 12, color: "var(--text-dim)" }}>
-          Showing {filteredScenes.length} of {analyzedScenes.length} scene notes
+          Showing {filteredScenes.length} of {analyzedScenes.length} analyzed scenes
         </span>
         <div style={{ marginLeft: "auto" }}>
           <Button ghost onClick={() => window.print()} style={{ fontSize: 12 }}>
@@ -77,9 +85,7 @@ export default function DirectorNotes() {
               )}
             </div>
 
-            <div className={styles.noteBody}>
-              "{s.director_notes}"
-            </div>
+            <div className={styles.noteBody}>{s.director_notes}</div>
 
             <div className={styles.notesFooter}>
               {s.cinematic?.camera && <span className={styles.tagBadge}>Camera: {s.cinematic.camera}</span>}

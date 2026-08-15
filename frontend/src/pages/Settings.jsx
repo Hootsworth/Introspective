@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/client";
 import ComfyUITestSuite from "../components/ComfyUITestSuite";
-import TopBar from "../components/TopBar";
+
+import LoadingState from "../components/LoadingState";
 import { Button } from "../components/ui";
 import styles from "./Settings.module.css";
 
@@ -51,6 +52,7 @@ export default function Settings({ theme, setTheme }) {
 
   async function handleSave() {
     setSaving(true);
+    setError(null);
     try {
       const payload = { ...form };
       if (!payload.openai_api_key) delete payload.openai_api_key;
@@ -59,6 +61,8 @@ export default function Settings({ theme, setTheme }) {
       setSettings(updated);
       setForm((f) => ({ ...f, openai_api_key: "", gemini_api_key: "" }));
       setSaved(true);
+    } catch (err) {
+      setError(err.message || "Failed to save settings");
     } finally {
       setSaving(false);
     }
@@ -66,38 +70,21 @@ export default function Settings({ theme, setTheme }) {
 
   if (error) {
     return (
-      <>
-        <TopBar
-          title="Settings"
-          subtitle="API keys, model selection, and inference mode"
-          theme={theme}
-          setTheme={setTheme}
-          backTo="/"
-          backLabel="Dashboard"
-        />
-        <div style={{ padding: 32, maxWidth: 600 }}>
-          <div style={{ color: "#ef4444", marginBottom: 16, fontSize: 14 }}>{error}</div>
-          <Button primary onClick={loadSettings}>
-            Retry Loading Settings
-          </Button>
-        </div>
-      </>
+      <div style={{ padding: 32, maxWidth: 600 }}>
+        <div style={{ color: "#ef4444", marginBottom: 16, fontSize: 14 }}>{error}</div>
+        <Button primary onClick={loadSettings}>
+          Retry Loading Settings
+        </Button>
+      </div>
     );
   }
 
-  if (!settings) return <div style={{ padding: 32, color: "var(--text-dim)" }}>Loading…</div>;
+  if (!settings) return <LoadingState label="Loading settings" />;
 
   return (
-    <>
-      <TopBar
-        title="Settings"
-        subtitle="API keys, model selection, and inference mode"
-        theme={theme}
-        setTheme={setTheme}
-        backTo="/"
-        backLabel="Dashboard"
-      />
-      <div className={styles.wrap}>
+    <div className={styles.wrap}>
+      <h1 style={{ fontSize: 21, fontWeight: 800, letterSpacing: '-.03em', margin: '0 0 8px' }}>Settings</h1>
+      <p style={{ fontSize: 12, color: 'var(--text-dim)', margin: '0 0 28px' }}>API keys, model selection, and inference mode</p>
         <div className={styles.section}>
           <div className={styles.sectionTitle}>Appearance & Theme</div>
           <div className={styles.sectionDesc}>Customize application color scheme and UI aesthetic.</div>
@@ -247,7 +234,6 @@ export default function Settings({ theme, setTheme }) {
             {saving ? "Saving…" : saved ? "Saved" : "Save Settings"}
           </Button>
         </div>
-      </div>
-    </>
+    </div>
   );
 }

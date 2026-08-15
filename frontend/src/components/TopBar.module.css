@@ -1,69 +1,9 @@
-.bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 32px 4px;
-}
-
-.title {
-  font-family: var(--font-display);
-  font-size: 30px;
-  letter-spacing: 0.01em;
-  margin: 0;
-}
-
-.subtitle {
-  font-size: 13px;
-  color: var(--text-dim);
-  margin: 2px 0 0;
-}
-
-.toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 4px;
-}
-
-.toggleBtn {
-  border: none;
-  background: transparent;
-  color: var(--text-dim);
-  border-radius: 16px;
-  padding: 6px 12px;
-  font-size: 12.5px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.toggleBtnActive {
-  background: var(--text);
-  color: var(--bg);
-}
-
-.backBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
-  background: var(--surface-2);
-  color: var(--text-dim);
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-}
-
-.backBtn:hover {
-  background: var(--surface);
-  color: var(--text);
-  border-color: var(--accent-amber);
-}
+.bar { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 40px; border-bottom: 1px solid var(--border-soft); background: var(--surface); }
+.title { margin: 0; color: var(--text); font-size: 21px; line-height: 1.1; font-weight: 800; letter-spacing: -.03em; }
+.subtitle { display: inline-block; max-width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; background: var(--surface-2); color: var(--text-dim); font: 700 10px var(--font-mono); }
+.backBtn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; font-size: 12px; font-weight: 700; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-dim); }
+.backBtn:hover { color: var(--text); border-color: var(--text-faint); background: var(--surface-2); }
+.toggle { display: flex; align-items: center; gap: 2px; background: var(--surface-2); border: 1px solid var(--border-soft); border-radius: 6px; padding: 3px; }
+.toggleBtn { border: 0; background: transparent; color: var(--text-dim); border-radius: 4px; padding: 6px 9px; font-size: 11px; font-weight: 700; }
+.toggleBtnActive { background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); }
+@media (max-width: 720px) { .bar { padding: 16px 20px; } .bar > div:last-child { display: none; } }

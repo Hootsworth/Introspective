@@ -1,5 +1,5 @@
 .wrap {
-  padding: 0 32px 40px;
+  padding: 26px 32px 40px;
   max-width: 1280px;
   margin: 0 auto;
 }
@@ -41,6 +41,12 @@
   color: var(--accent-cyan);
   font-weight: 500;
 }
+.timelineCard { margin-bottom: 22px; padding: 15px 16px 17px; background: var(--surface); border: 1px solid var(--border-soft); border-radius: 8px; }
+.timelineHeader { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.timelineHint { color: var(--text-faint); font: 10px var(--font-mono); }
+.timelineTrack { display: flex; gap: 3px; height: 30px; }
+.timelineSegment { min-width: 14px; border: 0; border-radius: 3px; background: var(--accent-cyan); opacity: .78; color: var(--bg); font: 700 9px var(--font-mono); overflow: hidden; transition: opacity .15s ease, transform .15s ease; }
+.timelineSegment:hover { opacity: 1; transform: translateY(-2px); }
 
 .controlsBar {
   display: flex;

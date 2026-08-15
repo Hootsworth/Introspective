@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { api } from "../api/client";
-import { Button, Pill } from "./ui";
+import { Button } from "./ui";
+import LoadingState from "./LoadingState";
 
 function IconVideo() {
   return (
@@ -38,7 +39,7 @@ function IconExternal() {
   );
 }
 
-export default function AnimaticPlayer({ project, script, onRefresh }) {
+export default function AnimaticPlayer({ project, onRefresh }) {
   const [manifest, setManifest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -78,7 +79,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
   };
 
   const totalDuration = manifest?.total_duration_sec || 10;
-  const shots = manifest?.shots || [];
+  const shots = useMemo(() => manifest?.shots || [], [manifest]);
 
   // Preload images into memory
   useEffect(() => {
@@ -232,7 +233,6 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
           setIsPlaying(false);
           return 0;
         }
-        drawFrame(next);
         return next;
       });
 
@@ -240,7 +240,7 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
         animationRef.current = requestAnimationFrame(loop);
       }
     },
-    [isPlaying, playbackSpeed, totalDuration, drawFrame]
+    [isPlaying, playbackSpeed, totalDuration]
   );
 
   useEffect(() => {
@@ -266,17 +266,15 @@ export default function AnimaticPlayer({ project, script, onRefresh }) {
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     const newTime = pct * totalDuration;
     setCurrentTime(newTime);
-    drawFrame(newTime);
   };
 
   if (loading) {
-    return <div style={{ padding: 40, textAlign: "center", color: "var(--text-dim)" }}>Loading Animatic Video Reel...</div>;
+    return <LoadingState label="Loading video reel" />;
   }
-
-  const activeShot = shots[currentShotIndex] || {};
 
   return (
     <div
+      className="media-surface"
       style={{
         background: "var(--surface-2)",
         border: "1px solid var(--border-soft)",

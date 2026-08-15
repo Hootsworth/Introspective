@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import Modal from "../components/Modal";
-import TopBar from "../components/TopBar";
+
 import { Button, EmptyState } from "../components/ui";
 import styles from "./Dashboard.module.css";
 
@@ -103,19 +103,20 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
 
   return (
     <>
-      <TopBar
-        title="Projects Workspace"
-        subtitle="Manage screenplays, scenes, characters, and pre-production assets"
-        theme={theme}
-        setTheme={setTheme}
-        right={
-          <Button primary onClick={openCreateModal}>
-            + New Project
-          </Button>
-        }
-      />
-
       <div className={styles.wrap}>
+        <div className={styles.introRow}>
+          <div>
+            <div className={styles.eyebrow}>WORKSPACE OVERVIEW</div>
+            <h2 className={styles.pageHeading}>Your production desk</h2>
+            <p className={styles.pageIntro}>Keep every screenplay, scene, and visual decision in one focused workspace.</p>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div className={styles.summary}><span className={styles.summaryValue}>{projects.length}</span><span>active {projects.length === 1 ? "project" : "projects"}</span></div>
+            <Button primary onClick={openCreateModal}>
+              + New Project
+            </Button>
+          </div>
+        </div>
         {loadError && (
           <div className={styles.errorBanner}>
             <span>{loadError}</span>
@@ -142,14 +143,18 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
             {projects.map((p) => (
               <div
                 key={p.id}
-                className={styles.posterCard}
+                className={styles.projectCard}
                 onClick={() => navigate(`/projects/${p.id}/script`)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === "Enter" && navigate(`/projects/${p.id}/script`)}
               >
-                <div className={styles.posterHeader}>
+                <div className={styles.projectTopline}>
+                  <span className={styles.projectIndex}>{String(projects.indexOf(p) + 1).padStart(2, "0")}</span>
                   <span className={styles.modeBadge}>{p.ai_mode}</span>
                 </div>
 
-                <div className={styles.posterContent}>
+                <div className={styles.projectContent}>
                   <div className={styles.projectTitle}>{p.title}</div>
                   {p.style_prompt && <div className={styles.styleTag}>{p.style_prompt}</div>}
                   <div className={styles.posterMeta}>
@@ -185,11 +190,9 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
               </div>
             ))}
 
-            <button className={styles.newPosterCard} onClick={openCreateModal}>
-              <span style={{ fontFamily: "var(--font-display)", fontSize: 24, color: "var(--accent-cyan)" }}>
-                + New Project
-              </span>
-              <span style={{ fontSize: 12, color: "var(--text-dim)" }}>Create screenplay workspace</span>
+            <button className={styles.newProjectCard} onClick={openCreateModal}>
+              <span className={styles.plus}>+</span>
+              <span><strong>New project</strong><small>Start a screenplay workspace</small></span>
             </button>
           </div>
         )}

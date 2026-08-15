@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../api/client";
 import { Button, Pill } from "./ui";
+import LoadingState from "./LoadingState";
 
 function IconDeck() {
   return (
@@ -71,7 +72,7 @@ function IconSun() {
   );
 }
 
-export default function PitchDeckViewer({ project, script, onRefresh }) {
+export default function PitchDeckViewer({ project, onRefresh }) {
   const [deckData, setDeckData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
@@ -102,11 +103,7 @@ export default function PitchDeckViewer({ project, script, onRefresh }) {
   };
 
   if (loading) {
-    return (
-      <div style={{ padding: 40, textAlign: "center", color: "var(--text-dim)" }}>
-        Loading Pitch Deck Presentation...
-      </div>
-    );
+    return <LoadingState label="Loading presentation" />;
   }
 
   const slides = deckData?.slides || [];
@@ -114,6 +111,7 @@ export default function PitchDeckViewer({ project, script, onRefresh }) {
 
   return (
     <div
+      className="media-surface"
       style={{
         background: "var(--surface-2)",
         border: "1px solid var(--border-soft)",

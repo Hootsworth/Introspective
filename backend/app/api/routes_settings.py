@@ -71,7 +71,7 @@ async def update_settings(payload: SettingsIn):
 
 
 @router.post("/comfyui/test")
-async def test_comfyui_integration(req: ComfyUITestRequest = None) -> Dict[str, Any]:
+async def test_comfyui_integration(req: Optional[ComfyUITestRequest] = None) -> Dict[str, Any]:
     """
     Run diagnostic integration test suite against ComfyUI instance.
     """

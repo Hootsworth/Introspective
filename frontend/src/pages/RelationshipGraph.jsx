@@ -161,7 +161,7 @@ export default function RelationshipGraph() {
                     fontFamily="var(--font-body)"
                     fontSize="11.5"
                     fontWeight={isActive ? "700" : "600"}
-                    fill={isActive ? "#ffffff" : "var(--text)"}
+                    fill="var(--text)"
                   >
                     {n.name}
                   </text>
@@ -223,7 +223,10 @@ export default function RelationshipGraph() {
             <div>
               <div className={styles.sectionTitle}>Scene Occurrences</div>
               <div className={styles.scenesRow}>
-                {(activeChar.computedScenes.length > 0 ? activeChar.computedScenes : activeChar.scene_numbers).map((sn) => (
+                {((activeChar.computedScenes && activeChar.computedScenes.length > 0)
+                  ? activeChar.computedScenes
+                  : (activeChar.scene_numbers || [])
+                ).map((sn) => (
                   <span key={sn} className={styles.sceneBadge}>
                     SHOT {String(sn).padStart(2, "0")}
                   </span>

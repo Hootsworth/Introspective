@@ -1,8 +1,22 @@
 .wrap {
-  padding: 0 32px 40px;
+  padding: 26px 40px 56px;
   max-width: 1280px;
   margin: 0 auto;
 }
+.moodboardWrap { max-width: 1320px; }
+.moodboardGrid { grid-template-columns: 1fr; }
+.moodboardCard { background: var(--surface) !important; border-color: var(--border) !important; box-shadow: var(--shadow-sm); }
+.moodboardTitle { color: var(--text); font-size: 28px; font-weight: 800; letter-spacing: -.045em; margin-bottom: 8px; }
+.moodboardDesc { color: var(--text-dim); font-size: 13px; line-height: 1.6; margin: 0 0 24px; max-width: 760px; }
+.moodboardDesc em { color: var(--text) !important; font-style: normal; font-weight: 700; }
+.moodboardPaletteGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.moodboardSceneCard { background: var(--surface-1) !important; border: 1px solid var(--border-soft); border-radius: 7px; padding: 16px; transition: border-color .15s ease, transform .15s ease; }
+.moodboardSceneCard:hover { border-color: var(--accent-cyan); transform: translateY(-2px); }
+.moodboardSceneTitle { color: var(--text); font-size: 12px; font-weight: 800; line-height: 1.4; text-transform: uppercase; }
+.moodboardLighting { color: var(--text-dim); font: 11px var(--font-mono); margin: 8px 0 14px; }
+.moodboardSwatchLabel { display: flex; align-items: center; gap: 6px; background: var(--surface) !important; border: 1px solid var(--border-soft); border-radius: 4px; padding: 4px 7px; }
+.moodboardSwatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; border: 1px solid var(--border); }
+.moodboardSwatchLabel span:last-child { color: var(--text) !important; font: 10px var(--font-mono); }
 
 .controls {
   display: flex;

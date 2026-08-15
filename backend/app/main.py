@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.api import (routes_characters, routes_export, routes_projects,
-                      routes_scripts, routes_settings, routes_storyboard)
+                      routes_scripts, routes_settings, routes_storyboard, routes_workspace)
 from app.config import GENERATED_DIR
 from app.db import init_db
 
@@ -20,12 +20,14 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://127.0.0.1:5173",
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
+        "http://localhost:5180",
+        "http://127.0.0.1:5180",
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:8420",
         "http://127.0.0.1:8420",
+        "http://localhost:8430",
+        "http://127.0.0.1:8430",
     ],
     allow_origin_regex=r"https?://(localhost|127\.0\.0\.1|0\.0\.0\.0|\[::1\])(:\d+)?",
     allow_credentials=True,
@@ -45,6 +47,7 @@ app.include_router(routes_characters.router)
 app.include_router(routes_settings.router)
 app.include_router(routes_export.router)
 app.include_router(routes_storyboard.router)
+app.include_router(routes_workspace.router)
 
 # Serves generated images (mood boards, storyboards, character sheets) once
 # Phase 2 image backends write into data/generated/<project_id>/...

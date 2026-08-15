@@ -1,0 +1,12 @@
+.search { position: relative; width: 220px; }
+.search input { width: 100%; height: 34px; padding: 8px 10px 8px 28px; border: 1px solid var(--border); border-radius: 5px; background: var(--surface-1); color: var(--text); font-size: 11px; outline: none; }
+.search input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 0 3px var(--accent-cyan-soft); }
+.icon { position: absolute; left: 10px; top: 7px; color: var(--text-dim); font-size: 17px; line-height: 1; }
+.results { position: absolute; z-index: 30; top: 40px; right: 0; width: 320px; max-height: 320px; overflow: auto; padding: 5px; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; box-shadow: var(--shadow-lg); }
+.results button { display: flex; gap: 9px; width: 100%; padding: 9px; text-align: left; border: 0; border-radius: 5px; background: transparent; color: var(--text); }
+.results button:hover { background: var(--surface-2); }
+.results strong, .results small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.results strong { font-size: 11px; }.results small { margin-top: 3px; color: var(--text-dim); font-size: 10px; }
+.kind { flex: 0 0 auto; color: var(--accent-cyan); font: 700 9px var(--font-mono); text-transform: uppercase; padding-top: 2px; }
+.empty { padding: 18px 10px; color: var(--text-dim); text-align: center; font-size: 11px; }
+@media (max-width: 720px) { .search { display: none; } }

@@ -194,6 +194,18 @@ async def clear_scene_frame(project_id: str, scene_id: str, db: Session = Depend
     scene.generated_image_url = None
     scene.generated_prompt = ""
     db.commit()
+
+    # Trigger automatic refresh of pitch deck & animatic video manifest
+    try:
+        from app.services.pitch_deck import save_pitch_deck_files
+        from app.services.animatic import save_animatic_files
+        project = (scene.script.project if scene.script else None) or db.query(Project).filter(Project.id == project_id).first()
+        if project:
+            save_pitch_deck_files(db, project)
+            save_animatic_files(db, project)
+    except Exception as ex:
+        logger.warning(f"Failed to auto-update pitch deck/animatic: {ex}")
+
     return {"status": "cleared", "scene_id": scene_id}
 
 

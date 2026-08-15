@@ -83,6 +83,39 @@ class ScriptDetailOut(ScriptOut):
     scenes: list[SceneOut]
 
 
+class SceneUpdate(BaseModel):
+    slugline: Optional[str] = None
+    action_text: Optional[str] = None
+    dialogue: Optional[list[DialogueLine]] = None
+    director_notes: Optional[str] = None
+
+
+class NoteIn(BaseModel):
+    script_id: Optional[str] = None
+    scene_id: Optional[str] = None
+    title: str = ""
+    body: str = ""
+    color: str = "yellow"
+
+
+class NoteOut(NoteIn):
+    id: str
+    project_id: str
+    created_at: dt.datetime
+    updated_at: dt.datetime
+
+    class Config:
+        from_attributes = True
+
+
+class SearchResult(BaseModel):
+    kind: str
+    id: str
+    title: str
+    detail: str = ""
+    url: str
+
+
 # ---------------------------------------------------------------------------
 # Characters
 # ---------------------------------------------------------------------------

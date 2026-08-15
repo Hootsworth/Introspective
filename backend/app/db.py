@@ -108,6 +108,20 @@ class Character(Base):
     project = relationship("Project", back_populates="characters")
 
 
+class ProjectNote(Base):
+    __tablename__ = "project_notes"
+
+    id = Column(String, primary_key=True, default=_uuid)
+    project_id = Column(String, ForeignKey("projects.id"), nullable=False)
+    script_id = Column(String, nullable=True)
+    scene_id = Column(String, nullable=True)
+    title = Column(String, default="")
+    body = Column(Text, default="")
+    color = Column(String, default="yellow")
+    created_at = Column(DateTime, default=dt.datetime.utcnow)
+    updated_at = Column(DateTime, default=dt.datetime.utcnow, onupdate=dt.datetime.utcnow)
+
+
 class AICacheEntry(Base):
     """
     Deterministic prompt-hash -> response cache. This is what lets Hybrid

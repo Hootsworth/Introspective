@@ -22,27 +22,10 @@ export default function TopBar({ title, subtitle, right, backTo, backLabel }) {
             </span>
           </button>
         )}
-        {!backTo && (
-          <img src="/logo.png" style={{ width: 26, height: 26, objectFit: "contain" }} alt="Introspective Logo" />
-        )}
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <h1 className={styles.title}>{title}</h1>
           {subtitle && (
-            <span
-              style={{
-                fontSize: 11.5,
-                fontWeight: 600,
-                fontFamily: "var(--font-mono)",
-                color: "var(--accent-cyan)",
-                background: "rgba(226, 194, 117, 0.12)",
-                border: "1px solid rgba(226, 194, 117, 0.25)",
-                padding: "2px 8px",
-                borderRadius: 4,
-                display: "inline-block",
-              }}
-            >
-              {subtitle}
-            </span>
+            <span className={styles.subtitle}>{subtitle}</span>
           )}
         </div>
       </div>

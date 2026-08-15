@@ -1,0 +1,60 @@
+.loading {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text);
+}
+
+.mark {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-top-color: var(--accent-cyan);
+  border-radius: 9px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  animation: loadingSpin 1.15s linear infinite;
+}
+
+.markCore {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 0 4px var(--accent-cyan-soft);
+}
+
+.copy { display: block; }
+
+.copy strong {
+  display: block;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+
+.sub {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-dim);
+  font: 10px/1.2 var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.compact {
+  min-height: auto;
+  padding: 4px 0;
+}
+
+@keyframes loadingSpin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark { animation: none; }
+}

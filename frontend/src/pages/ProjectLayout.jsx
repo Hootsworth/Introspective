@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Outlet, useParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
-import TopBar from "../components/TopBar";
+
+import LoadingState from "../components/LoadingState";
 
 export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
   const { projectId } = useParams();
@@ -47,6 +48,8 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
   useEffect(() => {
     setLoading(true);
     setError(null);
+    setActiveScriptId(null);
+    setScript(null);
     Promise.all([refreshProject(), refreshScripts(), refreshCharacters()])
       .catch((err) => setError(err.message || "Failed to load project details"))
       .finally(() => setLoading(false));
@@ -65,19 +68,21 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
       ...patch,
     });
     setProject((prev) => ({ ...prev, ...updated }));
-    refreshProjects();
+    if (typeof refreshProjects === "function") {
+      refreshProjects();
+    }
   }
 
   if (error) {
     return (
-      <div style={{ padding: 32, maxWidth: 600 }}>
-        <div style={{ color: "#ef4444", marginBottom: 16, fontSize: 14 }}>{error}</div>
+      <div style={{ padding: 40, maxWidth: 620 }}>
+        <div style={{ color: "var(--accent-red)", marginBottom: 16, fontSize: 14 }}>{error}</div>
         <button
           onClick={() => navigate("/")}
           style={{
             padding: "8px 16px",
-            background: "var(--accent-cyan)",
-            color: "#000",
+            background: "var(--text)",
+            color: "var(--bg)",
             fontWeight: 600,
             border: "none",
             borderRadius: "6px",
@@ -91,24 +96,16 @@ export default function ProjectLayout({ theme, setTheme, refreshProjects }) {
   }
 
   if (loading || !project) {
-    return <div style={{ padding: 32, color: "var(--text-dim)" }}>Loading project…</div>;
+    return <LoadingState label="Loading project" />;
   }
 
   return (
-    <>
-      <TopBar
-        title={project.title}
-        subtitle={project.style_prompt || "No visual style set"}
-        theme={theme}
-        setTheme={setTheme}
-      />
-      <Outlet
-        context={{
-          project, scripts, script, activeScriptId, setActiveScriptId,
-          characters, refreshCharacters, refreshScript, refreshScripts,
-          refreshProject, updateProjectSettings, navigate,
-        }}
-      />
-    </>
+    <Outlet
+      context={{
+        project, scripts, script, activeScriptId, setActiveScriptId,
+        characters, refreshCharacters, refreshScript, refreshScripts,
+        refreshProject, updateProjectSettings, navigate,
+      }}
+    />
   );
 }

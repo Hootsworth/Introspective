@@ -18,7 +18,7 @@ export default function Exports() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14, maxWidth: 900 }}>
         {FORMATS.map((f) => (
           <div key={f.id} className={uiStyles.card} style={{ padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ fontFamily: "var(--font-display)", fontSize: 19 }}>{f.label}</div>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: 19, color: "var(--text)", fontWeight: 800 }}>{f.label}</div>
             <div style={{ fontSize: 12.5, color: "var(--text-dim)", lineHeight: 1.5, flex: 1 }}>{f.desc}</div>
             <a
               href={api.exportUrl(project.id, f.id)}

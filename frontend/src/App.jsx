@@ -17,13 +17,11 @@ import Exports from "./pages/Exports";
 import ImageStub from "./pages/ImageStub";
 
 export default function App() {
+  const location = useLocation();
   const [theme, setTheme] = useTheme();
   const [projects, setProjects] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState(null);
-
-  const location = useLocation();
-  const isDashboard = location.pathname === "/";
 
   const refreshProjects = useCallback(async () => {
     try {
@@ -40,10 +38,12 @@ export default function App() {
     refreshProjects().finally(() => setLoaded(true));
   }, [refreshProjects]);
 
+  const isDashboard = location.pathname === "/";
+
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {!isDashboard && <Sidebar projects={projects} />}
-      <main style={{ flex: 1, minWidth: 0 }}>
+      <main className="app-main" style={{ flex: 1, minWidth: 0 }}>
         {loaded && (
           <Routes>
             <Route

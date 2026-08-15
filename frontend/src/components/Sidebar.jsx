@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 
@@ -34,9 +35,10 @@ function IconLeave() {
 }
 
 export default function Sidebar({ projects }) {
+  const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const match = location.pathname.match(/\/projects\/([^\/]+)/);
+  const match = location.pathname.match(/\/projects\/([^/]+)/);
   const currentProjectId = match ? match[1] : null;
 
   // Use active project or fallback to the most recent project in list
@@ -59,36 +61,47 @@ export default function Sidebar({ projects }) {
   ];
 
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.brand} onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-        <img src="/logo.png" className={styles.brandIcon} alt="Introspective Logo" />
-        <span className={styles.brandText}>Introspective</span>
+    <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
+      <div className={styles.header}>
+        <div className={styles.brand}>
+          <img src="/introspective-logo.png" className={styles.brandLogo} alt="Introspective" />
+        </div>
+        <button className={styles.collapseBtn} onClick={() => setCollapsed(c => !c)} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            {collapsed ? <path d="m9 6 6 6-6 6" /> : <path d="m15 6-6 6 6 6" />}
+          </svg>
+        </button>
       </div>
 
       {activeId && (
         <>
+          <button className={styles.projectCard} onClick={() => navigate(`/projects/${activeId}/script`)} title={activeProject?.title || "Open current project"}>
+            <span className={styles.projectEyebrow}>CURRENT PROJECT</span>
+            <span className={styles.projectTitle}>{activeProject?.title || "Untitled project"}</span>
+            <span className={styles.projectArrow}>↗</span>
+          </button>
           <nav className={styles.section}>
-            <div className={styles.sectionLabel}>PRE-PRODUCTION</div>
+            <div className={styles.sectionLabel}><span>PRE-PRODUCTION</span><span className={styles.sectionRule} /></div>
             {preProdNav.map((item) => (
               <NavLink
                 key={item.to}
                 to={`/projects/${activeId}/${item.to}`}
                 className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}
               >
-                <Icon name={item.icon} /> {item.label}
+                <Icon name={item.icon} /> <span className={styles.linkText}>{item.label}</span>
               </NavLink>
             ))}
           </nav>
 
           <nav className={styles.section}>
-            <div className={styles.sectionLabel}>VISUAL STUDIO</div>
+            <div className={styles.sectionLabel}><span>VISUAL STUDIO</span><span className={styles.sectionRule} /></div>
             {visualNav.map((item) => (
               <NavLink
                 key={item.to}
                 to={`/projects/${activeId}/${item.to}`}
                 className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}
               >
-                <Icon name={item.icon} /> {item.label}
+                <Icon name={item.icon} /> <span className={styles.linkText}>{item.label}</span>
               </NavLink>
             ))}
           </nav>
@@ -96,16 +109,16 @@ export default function Sidebar({ projects }) {
       )}
 
       <nav className={styles.section}>
-        <div className={styles.sectionLabel}>SETTINGS</div>
+        <div className={styles.sectionLabel}><span>APP</span><span className={styles.sectionRule} /></div>
         <NavLink to="/settings" className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
-          <Icon name="settings" /> Settings
+          <Icon name="settings" /> <span className={styles.linkText}>Settings</span>
         </NavLink>
       </nav>
 
       <div className={styles.spacer} />
 
       <button className={styles.leaveBtn} onClick={() => navigate("/")}>
-        <IconLeave /> Dashboard
+        <IconLeave /> <span className={styles.linkText}>Dashboard</span>
       </button>
     </aside>
   );

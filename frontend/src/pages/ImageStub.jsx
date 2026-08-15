@@ -4,9 +4,8 @@
 import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { api } from "../api/client";
-import PitchDeckViewer from "../components/PitchDeckViewer";
 import AnimaticPlayer from "../components/AnimaticPlayer";
-import { Button, Pill } from "../components/ui";
+import { Button } from "../components/ui";
 import styles from "./Storyboard.module.css";
 
 function parseColor(colorStr) {
@@ -50,7 +49,7 @@ function getFullImageUrl(url) {
   return `${baseHost}${url}`;
 }
 
-function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset = "sketch", aspectRatio }) {
+function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset = "sketch" }) {
   const imageUrl = generatedFrameUrl || scene.generated_image_url;
 
   if (imageUrl) {
@@ -220,7 +219,7 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
 
 export default function ImageStub({ kind }) {
   const { project, script, refreshScript } = useOutletContext();
-  const [subTab, setSubTab] = useState("grid"); // "grid" | "deck" | "video"
+  const [subTab, setSubTab] = useState("grid"); // "grid" | "video"
   const [aspectRatio, setAspectRatio] = useState("169");
   const [stylePreset, setStylePreset] = useState("sketch");
   const [generatingId, setGeneratingId] = useState(null);
@@ -310,7 +309,7 @@ export default function ImageStub({ kind }) {
     aspectRatio === "239" ? styles.viewport239 : aspectRatio === "43" ? styles.viewport43 : styles.viewport169;
 
   return (
-    <div className={styles.wrap}>
+    <div className={`${styles.wrap} ${kind === "moodboard" ? styles.moodboardWrap : ""}`}>
       {/* Error alert banner if render fails */}
       {renderError && (
         <div
@@ -359,22 +358,6 @@ export default function ImageStub({ kind }) {
             Storyboard Grid
           </button>
           <button
-            onClick={() => setSubTab("deck")}
-            style={{
-              background: subTab === "deck" ? "var(--surface-1)" : "transparent",
-              color: subTab === "deck" ? "var(--accent-gold)" : "var(--text-dim)",
-              border: "1px solid " + (subTab === "deck" ? "rgba(226, 194, 117, 0.3)" : "transparent"),
-              padding: "6px 14px",
-              borderRadius: 6,
-              fontWeight: subTab === "deck" ? 600 : 500,
-              fontSize: 12.5,
-              cursor: "pointer",
-              transition: "all 0.15s ease",
-            }}
-          >
-            Slide Pitch Deck
-          </button>
-          <button
             onClick={() => setSubTab("video")}
             style={{
               background: subTab === "video" ? "var(--surface-1)" : "transparent",
@@ -394,10 +377,6 @@ export default function ImageStub({ kind }) {
       )}
 
       {/* Render selected view mode */}
-      {kind === "storyboard" && subTab === "deck" && (
-        <PitchDeckViewer project={project} script={script} onRefresh={refreshScript} />
-      )}
-
       {kind === "storyboard" && subTab === "video" && (
         <AnimaticPlayer project={project} script={script} onRefresh={refreshScript} />
       )}
@@ -545,33 +524,28 @@ export default function ImageStub({ kind }) {
           })}
         </div>
       ) : (
-        <div className={styles.grid}>
-          <div className={styles.frameCard} style={{ gridColumn: "1 / -1", padding: 24 }}>
-            <div style={{ fontFamily: "var(--font-display)", fontSize: 24, marginBottom: 8 }}>
+        <div className={`${styles.grid} ${styles.moodboardGrid}`}>
+          <div className={`${styles.frameCard} ${styles.moodboardCard}`} style={{ gridColumn: "1 / -1", padding: 24 }}>
+            <div className={styles.moodboardTitle}>
               Project Mood Board — {project.title}
             </div>
-            <p style={{ color: "var(--text-dim)", fontSize: 14, margin: "0 0 20px" }}>
+            <p className={styles.moodboardDesc}>
               Visual style directions derived from your project style prompt (
               <em style={{ color: "var(--text)" }}>{project.style_prompt || "Default concept sketch"}</em>) and scene color palettes.
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
+            <div className={styles.moodboardPaletteGrid}>
               {script.scenes.map((s) => {
                 const rawPalette = s.cinematic?.palette || ["#0a0a0a", "#141414", "#e2c275"];
                 return (
                   <div
                     key={s.id}
-                    style={{
-                      background: "var(--surface-2)",
-                      border: "1px solid var(--border-soft)",
-                      borderRadius: 8,
-                      padding: 16,
-                    }}
+                    className={styles.moodboardSceneCard}
                   >
-                    <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
+                    <div className={styles.moodboardSceneTitle}>
                       SHOT {String(s.scene_number).padStart(2, "0")}: {(s.slugline.split("-")[0] || s.slugline).trim()}
                     </div>
-                    <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 12 }}>
+                    <div className={styles.moodboardLighting}>
                       Lighting: {s.cinematic?.lighting || "Natural Ambient"}
                     </div>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
@@ -580,26 +554,9 @@ export default function ImageStub({ kind }) {
                         return (
                           <div
                             key={i}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 6,
-                              background: "var(--surface-1)",
-                              border: "1px solid var(--border-soft)",
-                              borderRadius: 4,
-                              padding: "3px 8px",
-                            }}
+                              className={styles.moodboardSwatchLabel}
                           >
-                            <span
-                              style={{
-                                width: 14,
-                                height: 14,
-                                borderRadius: 3,
-                                background: hex,
-                                display: "inline-block",
-                                border: "1px solid rgba(255,255,255,0.2)",
-                              }}
-                            />
+                              <span className={styles.moodboardSwatch} style={{ background: hex }} />
                             <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--text)" }}>
                               {hex}
                             </span>
