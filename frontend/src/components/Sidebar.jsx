@@ -114,9 +114,6 @@ export default function Sidebar({ projects }) {
         <NavLink to="/settings" className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
           <Icon name="settings" /> <span className={styles.linkText}>Settings</span>
         </NavLink>
-        <NavLink to="/manifesto" className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
-          <Icon name="manifesto" /> <span className={styles.linkText}>Our Philosophy</span>
-        </NavLink>
       </nav>
 
       <div className={styles.spacer} />

@@ -234,16 +234,6 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
             </div>
           </>
         )}
-
-        {/* Filmmaker Philosophy Banner */}
-        <div className={styles.philosophyBanner} onClick={() => navigate("/manifesto")} role="button" tabIndex={0}>
-          <div className={styles.philosophyIcon}>🎬</div>
-          <div className={styles.philosophyText}>
-            <strong>A Note on Our Philosophy · Built for human craft</strong>
-            <p>Introspective exists to aid the creative vision of filmmakers, directors, and screenwriters — never to replace human artistry.</p>
-          </div>
-          <span className={styles.philosophyArrow}>Read Manifesto →</span>
-        </div>
       </div>
 
       {/* Create Modal */}

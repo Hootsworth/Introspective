@@ -63,12 +63,13 @@ export default function App() {
   }, [commandOpen]);
 
   const isDashboard = location.pathname === "/";
+  const isManifesto = location.pathname === "/manifesto";
   const projectMatch = location.pathname.match(/\/projects\/([^/]+)/);
-  const isFocusView = !isDashboard && focusMode;
+  const isFocusView = !isDashboard && !isManifesto && focusMode;
 
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      {!isDashboard && !isFocusView && <Sidebar projects={projects} />}
+      {!isDashboard && !isManifesto && !isFocusView && <Sidebar projects={projects} />}
       <main className="app-main" style={{ flex: 1, minWidth: 0 }}>
         {loaded && (
           <Routes>
