@@ -4,6 +4,7 @@ import json
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
+# pyrefly: ignore [missing-import]
 from sqlalchemy.orm import Session
 
 from app.db import Character, Project, Scene, Script, SessionLocal, get_db
