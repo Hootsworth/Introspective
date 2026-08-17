@@ -13,6 +13,7 @@ const ICONS = {
   notes: "M6 2h9l5 5v15H6V2Zm2 9h8v1.5H8V11Zm0 4h8v1.5H8V15Zm0-8h5v1.5H8V7Z",
   exports: "M12 3v11m0 0 4-4m-4 4-4-4M5 19h14v2H5v-2Z",
   settings: "M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm8.4 4a7.9 7.9 0 0 0-.15-1.5l2.1-1.6-2-3.4-2.5 1a8 8 0 0 0-2.6-1.5L14.8 2H9.2l-.45 2.5a8 8 0 0 0-2.6 1.5l-2.5-1-2 3.4 2.1 1.6A7.9 7.9 0 0 0 3.6 12c0 .5.05 1 .15 1.5l-2.1 1.6 2 3.4 2.5-1a8 8 0 0 0 2.6 1.5l.45 2.5h5.6l.45-2.5a8 8 0 0 0 2.6-1.5l2.5 1 2-3.4-2.1-1.6c.1-.5.15-1 .15-1.5Z",
+  manifesto: "M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z",
 };
 
 function Icon({ name }) {
@@ -112,6 +113,9 @@ export default function Sidebar({ projects }) {
         <div className={styles.sectionLabel}><span>APP</span><span className={styles.sectionRule} /></div>
         <NavLink to="/settings" className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
           <Icon name="settings" /> <span className={styles.linkText}>Settings</span>
+        </NavLink>
+        <NavLink to="/manifesto" className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ""}`}>
+          <Icon name="manifesto" /> <span className={styles.linkText}>Our Philosophy</span>
         </NavLink>
       </nav>
 

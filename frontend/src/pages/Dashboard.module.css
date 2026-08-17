@@ -41,5 +41,75 @@
 .modeRow { display: flex; gap: 7px; }
 .modeBtn { flex: 1; padding: 9px 8px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface-1); color: var(--text-dim); font-size: 11px; font-weight: 700; }
 .modeBtnActive { background: var(--text); color: var(--bg); border-color: var(--text); }
-.modalActions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
-@media (max-width: 720px) { .wrap { padding: 24px 20px 92px; } .introRow { align-items: flex-start; flex-direction: column; } .summary { align-self: flex-start; } .pageHeading { font-size: 26px; } .grid { grid-template-columns: 1fr; } }
+.manifestoBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.manifestoBtn:hover {
+  background: var(--surface-2);
+  border-color: var(--accent-gold);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+.manifestoBtn svg {
+  color: var(--accent-red, #b94b48);
+}
+.philosophyBanner {
+  margin-top: 36px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md, 8px);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: var(--shadow-sm);
+}
+.philosophyBanner:hover {
+  border-color: var(--accent-gold);
+  background: var(--surface-1);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.philosophyIcon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.philosophyText {
+  flex: 1;
+  min-width: 0;
+}
+.philosophyText strong {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 750;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.philosophyText p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.45;
+}
+.philosophyArrow {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-gold);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+@media (max-width: 720px) { .wrap { padding: 24px 20px 92px; } .introRow { align-items: flex-start; flex-direction: column; } .summary { align-self: flex-start; } .pageHeading { font-size: 26px; } .grid { grid-template-columns: 1fr; } .philosophyBanner { flex-direction: column; align-items: flex-start; gap: 10px; } }
+

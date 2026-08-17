@@ -15,6 +15,7 @@ import ShotList from "./pages/ShotList";
 import DirectorNotes from "./pages/DirectorNotes";
 import Exports from "./pages/Exports";
 import ImageStub from "./pages/ImageStub";
+import FilmmakerManifesto from "./pages/FilmmakerManifesto";
 import CommandPalette from "./components/CommandPalette";
 
 export default function App() {
@@ -84,6 +85,7 @@ export default function App() {
               }
             />
               <Route path="/settings" element={<Settings theme={theme} setTheme={setTheme} />} />
+              <Route path="/manifesto" element={<FilmmakerManifesto />} />
             <Route
               path="/projects/:projectId"
               element={<ProjectLayout theme={theme} setTheme={setTheme} refreshProjects={refreshProjects} focusMode={focusMode} setFocusMode={setFocusMode} />}

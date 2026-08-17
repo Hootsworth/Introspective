@@ -129,8 +129,19 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
             <h2 className={styles.pageHeading}>Your production desk</h2>
             <p className={styles.pageIntro}>Keep every screenplay, scene, and visual decision in one focused workspace.</p>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             <div className={styles.summary}><span className={styles.summaryValue}>{projects.length}</span><span>active {projects.length === 1 ? "project" : "projects"}</span></div>
+            <button
+              type="button"
+              className={styles.manifestoBtn}
+              onClick={() => navigate("/manifesto")}
+              title="Read our philosophy and commitment to filmmakers"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+              <span>For Filmmakers</span>
+            </button>
             <Button primary onClick={openCreateModal}>
               + New Project
             </Button>
@@ -223,6 +234,16 @@ export default function Dashboard({ projects, refreshProjects, theme, setTheme, 
             </div>
           </>
         )}
+
+        {/* Filmmaker Philosophy Banner */}
+        <div className={styles.philosophyBanner} onClick={() => navigate("/manifesto")} role="button" tabIndex={0}>
+          <div className={styles.philosophyIcon}>🎬</div>
+          <div className={styles.philosophyText}>
+            <strong>A Note on Our Philosophy · Built for human craft</strong>
+            <p>Introspective exists to aid the creative vision of filmmakers, directors, and screenwriters — never to replace human artistry.</p>
+          </div>
+          <span className={styles.philosophyArrow}>Read Manifesto →</span>
+        </div>
       </div>
 
       {/* Create Modal */}

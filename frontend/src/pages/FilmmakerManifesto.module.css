@@ -1,0 +1,282 @@
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 36px 80px;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.navBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.backBtn:hover {
+  background: var(--surface-2);
+  border-color: var(--accent-gold);
+}
+
+.badge {
+  font: 700 10px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  color: var(--accent-gold);
+  background: var(--accent-gold-soft);
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(220, 231, 237, 0.2);
+  text-transform: uppercase;
+}
+
+.hero {
+  margin-bottom: 48px;
+  text-align: left;
+}
+
+.eyebrow {
+  font: 700 11px/1.2 var(--font-mono);
+  letter-spacing: 0.14em;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-family: var(--font-display, inherit);
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  margin: 0 0 16px;
+  color: var(--text);
+}
+
+.subtitle {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  max-width: 760px;
+  margin: 0;
+}
+
+.letterCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg, 12px);
+  padding: 40px 48px;
+  margin-bottom: 48px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.letterCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent-gold);
+}
+
+.letterLead {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+
+.letterBody {
+  font-size: 15px;
+  color: var(--text-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.letterBody p {
+  margin: 0;
+}
+
+.quoteBlock {
+  margin: 28px 0;
+  padding: 20px 24px;
+  background: var(--surface-2);
+  border-left: 3px solid var(--accent-cyan);
+  border-radius: 0 var(--radius-md, 8px) var(--radius-md, 8px) 0;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.quoteAuthor {
+  display: block;
+  font-style: normal;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+  margin-top: 8px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.principlesSection {
+  margin-bottom: 56px;
+}
+
+.sectionHeading {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0 0 8px;
+  color: var(--text);
+}
+
+.sectionIntro {
+  font-size: 14.5px;
+  color: var(--text-dim);
+  margin: 0 0 28px;
+}
+
+.principlesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.principleCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md, 8px);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.principleCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-gold);
+}
+
+.principleIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  display: grid;
+  place-items: center;
+  color: var(--accent-gold);
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.principleTitle {
+  font-size: 16px;
+  font-weight: 750;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.principleDesc {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.signatureArea {
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.signatureSign {
+  font-family: var(--font-display, cursive, serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.signatureRole {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+}
+
+.ctaBox {
+  background: linear-gradient(135deg, var(--surface-1) 0%, var(--surface-2) 100%);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg, 12px);
+  padding: 36px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.ctaTitle {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--text);
+}
+
+.ctaDesc {
+  font-size: 14px;
+  color: var(--text-dim);
+  max-width: 520px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ctaActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+@media (max-width: 720px) {
+  .wrap {
+    padding: 20px 20px 80px;
+  }
+  .letterCard {
+    padding: 24px 20px;
+  }
+  .principlesGrid {
+    grid-template-columns: 1fr;
+  }
+}
