@@ -1,60 +1,232 @@
-.loading {
-  min-height: 180px;
+.root {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
   color: var(--text);
+  padding: 32px 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.mark {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--border);
-  border-top-color: var(--accent-cyan);
-  border-radius: 9px;
-  background: var(--surface);
+.container {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md, 8px);
+  background: var(--surface-1);
+  border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-sm);
-  animation: loadingSpin 1.15s linear infinite;
-}
-
-.markCore {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent-cyan);
-  box-shadow: 0 0 0 4px var(--accent-cyan-soft);
-}
-
-.copy { display: block; }
-
-.copy strong {
-  display: block;
-  font-size: 12px;
-  line-height: 1.2;
-  font-weight: 750;
-  letter-spacing: -0.01em;
-}
-
-.sub {
-  display: block;
-  margin-top: 4px;
-  color: var(--text-dim);
-  font: 10px/1.2 var(--font-mono);
-  letter-spacing: 0.04em;
+  transition: all 0.2s ease;
+  max-width: 100%;
 }
 
 .compact {
+  padding: 0;
+  width: auto;
   min-height: auto;
-  padding: 4px 0;
+  display: inline-flex;
 }
 
-@keyframes loadingSpin {
-  to { transform: rotate(360deg); }
+.compact .container {
+  padding: 3px 8px;
+  gap: 8px;
+  border-radius: 4px;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.76);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: inherit;
+}
+
+.glass .container,
+.overlay .container {
+  background: rgba(18, 26, 33, 0.88);
+  border: 1px solid rgba(220, 231, 237, 0.22);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 16px rgba(31, 75, 104, 0.2);
+  color: #f4f1eb;
+}
+
+:root[data-theme="dark"] .glass .container,
+:root[data-theme="dark"] .overlay .container {
+  background: rgba(15, 23, 30, 0.92);
+  border: 1px solid rgba(220, 231, 237, 0.22);
+}
+
+.pixelGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 5px);
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.small .pixelGrid {
+  grid-template-columns: repeat(3, 3.5px);
+  gap: 1.5px;
+}
+
+.large .pixelGrid {
+  grid-template-columns: repeat(3, 7px);
+  gap: 3px;
+}
+
+.pixel {
+  width: 5px;
+  height: 5px;
+  background-color: var(--accent-gold, #1f4b68);
+  display: block;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.overlay .pixel,
+.glass .pixel {
+  background-color: #dce7ed;
+}
+
+.small .pixel {
+  width: 3.5px;
+  height: 3.5px;
+}
+
+.large .pixel {
+  width: 7px;
+  height: 7px;
+}
+
+.pixelSquare {
+  border-radius: 1px;
+}
+
+.pixelRound {
+  border-radius: 50%;
+}
+
+.textWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.shimmerLabel {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  background: linear-gradient(
+    90deg,
+    var(--text-dim) 0%,
+    var(--text) 50%,
+    var(--text-dim) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmerText 1.6s linear infinite;
+  white-space: nowrap;
+}
+
+.overlay .shimmerLabel,
+.glass .shimmerLabel {
+  background: linear-gradient(
+    90deg,
+    rgba(244, 241, 235, 0.5) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(244, 241, 235, 0.5) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.small .shimmerLabel {
+  font-size: 11px;
+}
+
+.large .shimmerLabel {
+  font-size: 14px;
+}
+
+.subLabel {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.overlay .subLabel,
+.glass .subLabel {
+  color: rgba(244, 241, 235, 0.7);
+}
+
+.elapsedBadge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+
+.overlay .elapsedBadge,
+.glass .elapsedBadge {
+  color: #dce7ed;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.small .elapsedBadge {
+  font-size: 10px;
+  padding: 1px 4px;
+}
+
+@keyframes pixelOn {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 3px currentColor);
+  }
+}
+
+@keyframes shimmerText {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mark { animation: none; }
+  .pixel {
+    animation: none !important;
+    opacity: 0.25 !important;
+  }
+  .shimmerLabel {
+    animation: none !important;
+    -webkit-text-fill-color: currentColor;
+  }
 }

@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { api } from "../api/client";
 import AnimaticPlayer from "../components/AnimaticPlayer";
+import LoadingState from "../components/LoadingState";
 import { Button } from "../components/ui";
 import styles from "./Storyboard.module.css";
 
@@ -64,6 +65,8 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
             height: "100%",
             objectFit: "cover",
             display: "block",
+            filter: isGenerating ? "brightness(0.35) blur(2px)" : "none",
+            transition: "filter 0.3s ease",
           }}
         />
         {/* Rule of Thirds Grid Overlay */}
@@ -78,30 +81,43 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
           }}
         />
         {/* Telemetry HUD */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 10,
-            left: 10,
-            right: 10,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            fontSize: 10,
-            fontFamily: "var(--font-mono)",
-            color: "rgba(255, 255, 255, 0.9)",
-            background: "rgba(0, 0, 0, 0.85)",
-            backdropFilter: "blur(6px)",
-            padding: "4px 10px",
-            borderRadius: 4,
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-          }}
-        >
-          <span>
-            SHOT {String(scene.scene_number).padStart(2, "0")} · {scene.cinematic?.camera || "35mm"}
-          </span>
-          <span>{scene.cinematic?.lens_suggestion || "50mm"}</span>
-        </div>
+        {!isGenerating && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: 10,
+              left: 10,
+              right: 10,
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              fontSize: 10,
+              fontFamily: "var(--font-mono)",
+              color: "rgba(255, 255, 255, 0.9)",
+              background: "rgba(0, 0, 0, 0.85)",
+              backdropFilter: "blur(6px)",
+              padding: "4px 10px",
+              borderRadius: 4,
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            <span>
+              SHOT {String(scene.scene_number).padStart(2, "0")} · {scene.cinematic?.camera || "35mm"}
+            </span>
+            <span>{scene.cinematic?.lens_suggestion || "50mm"}</span>
+          </div>
+        )}
+
+        {isGenerating && (
+          <LoadingState
+            variant="Orbit"
+            overlay
+            label={`Synthesizing Shot ${String(scene.scene_number).padStart(2, "0")}`}
+            sublabel={scene.cinematic?.camera ? `${scene.cinematic.camera.split(",")[0].trim()} · 35mm` : "Rendering cinematic frame..."}
+            showElapsed
+            size="normal"
+          />
+        )}
       </div>
     );
   }
@@ -122,10 +138,16 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
 
   // Dynamic Slate Stage adapting to stylePreset
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative", background: "#000000" }}>
+    <div style={{ width: "100%", height: "100%", position: "relative", background: "#000000", overflow: "hidden" }}>
       <svg
         viewBox="0 0 800 450"
-        style={{ width: "100%", height: "100%", display: "block" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "block",
+          filter: isGenerating ? "brightness(0.3) blur(2px)" : "none",
+          transition: "filter 0.3s ease",
+        }}
         preserveAspectRatio="xMidYMid slice"
       >
         <rect width="800" height="450" fill="#000000" />
@@ -195,24 +217,37 @@ function SceneFrameArtwork({ scene, generatedFrameUrl, isGenerating, stylePreset
         )}
       </svg>
 
-      <div
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          background: "rgba(0, 0, 0, 0.85)",
-          backdropFilter: "blur(4px)",
-          padding: "3px 8px",
-          borderRadius: 4,
-          fontSize: 10,
-          color: isGenerating ? "var(--accent-amber)" : accentStroke,
-          fontFamily: "var(--font-mono)",
-          border: "1px solid var(--border-soft)",
-          fontWeight: 600,
-        }}
-      >
-        {isGenerating ? "RENDERING..." : presetLabel}
-      </div>
+      {!isGenerating && (
+        <div
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            background: "rgba(0, 0, 0, 0.85)",
+            backdropFilter: "blur(4px)",
+            padding: "3px 8px",
+            borderRadius: 4,
+            fontSize: 10,
+            color: accentStroke,
+            fontFamily: "var(--font-mono)",
+            border: "1px solid var(--border-soft)",
+            fontWeight: 600,
+          }}
+        >
+          {presetLabel}
+        </div>
+      )}
+
+      {isGenerating && (
+        <LoadingState
+          variant="Orbit"
+          overlay
+          label={`Synthesizing Shot ${String(scene.scene_number).padStart(2, "0")}`}
+          sublabel={scene.cinematic?.camera ? `${scene.cinematic.camera.split(",")[0].trim()} · 35mm` : "Rendering cinematic frame..."}
+          showElapsed
+          size="normal"
+        />
+      )}
     </div>
   );
 }
@@ -500,9 +535,21 @@ export default function ImageStub({ kind }) {
                       primary
                       disabled={isGenerating}
                       onClick={() => handleGenerateFrame(scene)}
-                      style={{ fontSize: 12, padding: "5px 12px" }}
+                      style={{ fontSize: 12, padding: "5px 12px", minWidth: isGenerating ? 130 : "auto" }}
                     >
-                      {isGenerating ? "Rendering..." : currentFrameUrl ? "Re-render Frame" : "Render Frame"}
+                      {isGenerating ? (
+                        <LoadingState
+                          compact
+                          variant="Drive"
+                          showElapsed={false}
+                          label="Rendering..."
+                          size="small"
+                        />
+                      ) : currentFrameUrl ? (
+                        "Re-render Frame"
+                      ) : (
+                        "Render Frame"
+                      )}
                     </Button>
 
                     <Button
@@ -714,15 +761,32 @@ export default function ImageStub({ kind }) {
                   <img
                     src={previewUrl.startsWith("http") ? previewUrl : `${api.base}${previewUrl}`}
                     alt={`Preview frame ${previewScene.scene_number}`}
-                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                      filter: generatingId === previewScene.id ? "brightness(0.35) blur(2px)" : "none",
+                      transition: "filter 0.3s ease",
+                    }}
                   />
                 ) : (
                   <SceneFrameArtwork
                     scene={previewScene}
                     generatedFrameUrl={null}
-                    isGenerating={false}
+                    isGenerating={generatingId === previewScene.id}
                     stylePreset={stylePreset}
                     aspectRatio={aspectRatio}
+                  />
+                )}
+
+                {generatingId === previewScene.id && previewUrl && (
+                  <LoadingState
+                    variant="Orbit"
+                    overlay
+                    label={`Rendering Shot ${String(previewScene.scene_number).padStart(2, "0")}`}
+                    sublabel="Synthesizing high-resolution cinematic frame..."
+                    showElapsed
+                    size="large"
                   />
                 )}
               </div>
@@ -787,9 +851,21 @@ export default function ImageStub({ kind }) {
                 primary
                 onClick={() => handleGenerateFrame(previewScene)}
                 disabled={generatingId === previewScene.id}
-                style={{ fontSize: 12, flexShrink: 0 }}
+                style={{ fontSize: 12, flexShrink: 0, minWidth: generatingId === previewScene.id ? 130 : "auto" }}
               >
-                {generatingId === previewScene.id ? "Rendering..." : previewUrl ? "Re-render Frame" : "Render Frame"}
+                {generatingId === previewScene.id ? (
+                  <LoadingState
+                    compact
+                    variant="Drive"
+                    showElapsed={false}
+                    label="Rendering..."
+                    size="small"
+                  />
+                ) : previewUrl ? (
+                  "Re-render Frame"
+                ) : (
+                  "Render Frame"
+                )}
               </Button>
             </div>
           </div>
