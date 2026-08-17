@@ -8,11 +8,11 @@ export default defineConfig({
     port: 5180,
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:8430',
+        target: 'http://127.0.0.1:8420',
         changeOrigin: true,
       },
       '/generated': {
-        target: 'http://127.0.0.1:8430',
+        target: 'http://127.0.0.1:8420',
         changeOrigin: true,
       },
     },

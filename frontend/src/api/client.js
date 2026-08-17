@@ -1,6 +1,6 @@
 const BASE = (typeof window !== "undefined")
   ? (import.meta.env?.VITE_API_BASE ?? "")
-  : "http://127.0.0.1:8430";
+  : "http://127.0.0.1:8420";
 
 async function request(path, options = {}) {
   const method = (options.method || "GET").toUpperCase();
